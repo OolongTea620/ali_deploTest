@@ -39,4 +39,8 @@ public class Product {
 
     @Column
     private LocalDateTime deletedAt;
+
+    @OneToOne
+    @JoinColumn(name = "product_stock_id")
+    private ProductStock productStock;
 }
