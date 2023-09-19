@@ -15,12 +15,12 @@ public class ProductResponseDto {
     private String imgUrl;
     private ProductStatus productStatus;
 
-    public ProductResponseDto(Product product, Long stock) {
+    public ProductResponseDto(Product product) {
         this.productId = product.getId();
         this.sellerId = product.getSeller().getId();
         this.productName = product.getProductName();
         this.price = product.getPrice();
-        this.stock = stock;
+        this.stock = product.getProductStock().getStock();
         this.info = product.getInfo();
         this.imgUrl = product.getImageUrl();
         this.productStatus = product.getProductStatus();
