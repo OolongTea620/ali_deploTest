@@ -24,4 +24,16 @@ public class UserController {
     public ResponseEntity<?> signup(@RequestBody UserSignupRequestDto requestDto){
         return userService.signup(requestDto);
     }
+
+    @ResponseBody // form 을 통해 입력, 뷰 구현 필요
+    @PostMapping("/email")
+    public String MailSend(String mail){
+
+        int number = mailService.sendMail(mail);
+        String num = "" + number;
+
+        return num;
+    }
+
+
 }

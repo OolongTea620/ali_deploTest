@@ -1,10 +1,13 @@
 package com.example.ali.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public class MsgDataResponseDto {
 
-@Getter
-@AllArgsConstructor
-public class MessageResponseDto {
     private String msg;
+    private Object data;
+
+    public MsgDataResponseDto(String msg, Object data) {
+        this.msg = msg;
+        this.data = data;
+    }
 }
+
