@@ -1,5 +1,6 @@
 package com.example.ali.jwt;
 
+import com.example.ali.dto.TokenDto;
 import com.example.ali.entity.RefreshToken;
 import com.example.ali.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -78,14 +79,26 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public com.sparta.post.dto.TokenDto createAllToken(String username) {
-        return new com.sparta.post.dto.TokenDto(createToken(username,"Access"), createToken(username, "Refresh"));
+    public TokenDto createAllToken(String username, String userType) {
+        return new TokenDto(createToken(username, userType,"Access"), createToken(username, userType,"Refresh"));
     }
 
 
+    public String getUserTypeFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("userType", String.class);
+        } catch (Exception e) {
+            return null; // 또는 적절한 예외 처리
+        }
+    }
+
     //JWT 생성
     //토큰 생성
-    public String createToken(String username, String tokenType) {
+    public String createToken(String username,String userType,String tokenType) {
         Date date = new Date();
 
         long token = (tokenType.equals("Access")) ? ACCESS_TIME : REFRESH_TIME;
@@ -93,6 +106,7 @@ public class JwtUtil {
         return Jwts.builder()
             .setSubject(username) // 사용자 식별자값(ID)
             .claim(AUTHORIZATION_KEY, AUTHORITY) // key 값으로 꺼내어 쓸 수 있다.
+                .claim("userType",userType)
             .setExpiration(new Date(date.getTime() + token)) // 만료 시간
             .setIssuedAt(date) // 발급일
             .signWith(key, signatureAlgorithm) // 암호화 알고리즘

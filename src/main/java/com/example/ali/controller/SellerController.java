@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/seller")
+@RequestMapping("/auth/seller")
 public class SellerController {
 
     private final SellerService sellerService;

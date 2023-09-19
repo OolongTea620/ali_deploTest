@@ -1,20 +1,16 @@
 package com.example.ali.security;
 
 import com.example.ali.dto.LoginRequestDto;
+import com.example.ali.dto.TokenDto;
 import com.example.ali.entity.RefreshToken;
 import com.example.ali.jwt.JwtUtil;
 import com.example.ali.repository.RefreshTokenRepository;
+import com.example.ali.service.SellerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.sparta.post.dto.TokenDto;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +19,14 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 //authfilter,loggingfilter 대신 편리하게 사용
@@ -31,18 +35,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final RefreshTokenRepository refreshTokenRepository;
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private SellerDetailsServiceImpl sellerDetailsService;
+
     private SellerDetailsServiceImpl sellerDetailsServiceImpl;
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         this.jwtUtil = jwtUtil;
         this.refreshTokenRepository = refreshTokenRepository;
-        setFilterProcessesUrl("/api/auth/login");
+
+        List<RequestMatcher> requestMatchers = new ArrayList<>();
+        requestMatchers.add(new AntPathRequestMatcher("/auth/user/login"));
+        requestMatchers.add(new AntPathRequestMatcher("/auth/seller/login"));
+
+        this.setRequiresAuthenticationRequestMatcher(new OrRequestMatcher(requestMatchers));
     }
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         log.info("로그인 시도");
+
         try {
             // 요청 본문이 비어 있는지 확인
             if (request.getContentLength() == 0) {
@@ -52,24 +68,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             String userType = requestDto.getUserType();
 
-            // userType 검증
+//             userType 검증
             if ("SELLER".equals(userType)) {
-                UserDetails sellerDetails = sellerDetailsServiceImpl.loadUserByUsername(requestDto.getUsername());
+                UserDetails sellerDetails = sellerDetailsService.loadUserByUsername(requestDto.getUsername());
                 return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                        sellerDetails.getUsername(),
-                        sellerDetails.getPassword(),
-                        sellerDetails.getAuthorities()
-                    )
+                        new UsernamePasswordAuthenticationToken(
+                                requestDto.getUsername(),
+                                requestDto.getPassword(),
+                                null
+                        )
                 );
-            } else{
-                UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(requestDto.getUsername());
-                return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails.getUsername(),
-                        userDetails.getPassword(),
-                        userDetails.getAuthorities()
-                    )
+            } else {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getUsername());
+//                log.info("userDetails.getUsername()={}",userDetails.getUsername());
+                return getAuthenticationManager().authenticate( // AuthenticationManager로 인증 시도 후 성공하면 Authentication 객체 리턴
+                        new UsernamePasswordAuthenticationToken( // UsernamePasswordAuthenticationToken 객체를 Authentication 객체로 인증 시도
+                                requestDto.getUsername(), // principal
+                                requestDto.getPassword(), // credentials
+                                null
+                        )
                 );
             }
         } catch (IOException e) {
@@ -81,10 +98,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+
+        Object principal = authResult.getPrincipal();
+        String username;
+        String userType;
+
+        if (principal instanceof UserDetailsImpl) {
+            UserDetailsImpl userDetails = (UserDetailsImpl) principal;
+            username = userDetails.getUsername();
+            userType = "USER"; // 또는 UserDetailsImpl 클래스에 userType 필드를 추가하여 userType = userDetails.getUserType(); 로 설정
+        } else if (principal instanceof SellerDetailsImpl) {
+            SellerDetailsImpl sellerDetails = (SellerDetailsImpl) principal;
+            username = sellerDetails.getUsername();
+            userType = "SELLER"; // 또는 SellerDetailsImpl 클래스에 userType 필드를 추가하여 userType = sellerDetails.getUserType(); 로 설정
+        } else {
+            throw new IllegalArgumentException("Unknown user type");
+        }
 
         // 아이디 정보로 token 생성
-        TokenDto tokenDto = jwtUtil.createAllToken(username);
+        TokenDto tokenDto = jwtUtil.createAllToken(username, userType);
 
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByUsername(username);
 
