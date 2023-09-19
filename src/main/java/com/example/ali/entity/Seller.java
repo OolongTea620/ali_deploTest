@@ -33,4 +33,13 @@ public class Seller {
 
     @Column
     private LocalDateTime deletedAt; // db filed : delete_at
+
+
+    public Seller(SellerSignupRequestDto requestDto, String password) {
+        this.username = requestDto.getUsername();
+        this.storeName = requestDto.getStoreName();
+        this.info = requestDto.getInfo();
+
+        this.password = password;
+    }
 }
