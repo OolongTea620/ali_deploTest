@@ -1,11 +1,11 @@
 package com.example.ali.dto;
 
-public class MessageResponseDto {
+public class MsgDataResponseDto {
 
     private String msg;
     private Object data;
 
-    public MessageResponseDto(String msg, Object data) {
+    public MsgDataResponseDto(String msg, Object data) {
         this.msg = msg;
         this.data = data;
     }

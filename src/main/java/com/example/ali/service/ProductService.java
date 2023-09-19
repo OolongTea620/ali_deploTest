@@ -1,13 +1,12 @@
 package com.example.ali.service;
 
-import com.example.ali.dto.MessageResponseDto;
+import com.example.ali.dto.MsgDataResponseDto;
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
 import com.example.ali.entity.Product;
 import com.example.ali.entity.ProductStock;
 import com.example.ali.entity.Seller;
 import com.example.ali.repository.ProductRepository;
-import com.example.ali.repository.ProductStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,7 @@ public class ProductService {
         Product newProduct = productRepository.save(product);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new MessageResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
+                .body(new MsgDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
     }
 
     @Transactional
@@ -42,7 +41,7 @@ public class ProductService {
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(new MessageResponseDto("상품 수정 성공", new ProductResponseDto(product)));
+                .body(new MsgDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
     }
 
     @Transactional
@@ -51,7 +50,7 @@ public class ProductService {
         productRepository.delete(product);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new MessageResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
+                .body(new MsgDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
     }
 
     @Transactional(readOnly = true)
