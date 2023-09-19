@@ -30,14 +30,14 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler({ProductNotFoundException.class})
-    public ResponseEntity<RestApiException> notFoundProductExceptionHandler(ProductNotFoundException ex) {
-        RestApiException restApiException = new RestApiException(ex.getMessage(), HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(
-                // HTTP body
-                restApiException,
-                // HTTP status code
-                HttpStatus.NOT_FOUND
-        );
-    }
+//    @ExceptionHandler({ProductNotFoundException.class})
+//    public ResponseEntity<RestApiException> notFoundProductExceptionHandler(ProductNotFoundException ex) {
+//        RestApiException restApiException = new RestApiException(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+//        return new ResponseEntity<>(
+//                // HTTP body
+//                restApiException,
+//                // HTTP status code
+//                HttpStatus.NOT_FOUND
+//        );
+//    }
 }
