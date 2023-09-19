@@ -1,5 +1,6 @@
 package com.example.ali.entity;
 
+import com.example.ali.dto.SellerSignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
