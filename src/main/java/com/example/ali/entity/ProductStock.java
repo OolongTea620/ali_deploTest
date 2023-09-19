@@ -22,8 +22,11 @@ public class ProductStock {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public ProductStock(Product product, Long stock) {
+    public ProductStock(Long stock) {
         this.stock = stock;
-        this.product = product;
+    }
+
+    public void update(Long stock) {
+        this.stock = stock;
     }
 }

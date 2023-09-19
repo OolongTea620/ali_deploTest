@@ -8,7 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-@RestController //변경해야하나?
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class ProductController {
@@ -18,8 +18,8 @@ public class ProductController {
     //seller 상품 등록
     @PostMapping("/seller/product")
     public ResponseEntity<?> createProduct(@RequestBody ProductRequestDto requestDto,
-                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return productService.createProduct(requestDto, userDetails.getSeller);
+                                           @AuthenticationPrincipal SellerDetailsImpl sellerDetails) {//검증 필요
+        return productService.createProduct(requestDto, sellerDetails.getSeller());
     }
 
     //seller 상품 수정

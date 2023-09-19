@@ -22,24 +22,24 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductStockRepository productStockRepository;
 
     @Transactional
     public ResponseEntity<?> createProduct(ProductRequestDto requestDto, Seller seller) {
-        Product product = new Product(requestDto, seller);
+
+        ProductStock productStock = new ProductStock(requestDto.getStock());
+        Product product = new Product(requestDto, seller, productStock);
+
         Product newProduct = productRepository.save(product);
-        ProductStock productStock = new ProductStock(newProduct, requestDto.getStock());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new MessageResponseDto("상품 등록 성공", new ProductResponseDto(newProduct, productStock.getStock())));
+                .body(new MessageResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
     }
 
     @Transactional
     public ResponseEntity<?> updateProduct(Long productId, ProductRequestDto requestDto) {
         Product product = findProductById(productId);
         product.update(requestDto);
-//        ProductStock productStock = productStockRepository.findProductStockByProduct(product);
-        //이거 에바임 양방향 맺어야됨;;;
+
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(new MessageResponseDto("상품 수정 성공", new ProductResponseDto(product)));
