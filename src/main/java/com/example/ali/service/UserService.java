@@ -2,6 +2,7 @@ package com.example.ali.service;
 
 import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.UserSignupRequestDto;
+import com.example.ali.entity.Seller;
 import com.example.ali.entity.User;
 import com.example.ali.repository.UserRepository;
 import java.util.Collections;
@@ -38,5 +39,6 @@ public class UserService {
 
         return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
     }
+
 
 }

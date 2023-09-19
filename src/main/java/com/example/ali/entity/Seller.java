@@ -1,6 +1,7 @@
 package com.example.ali.entity;
 
 import com.example.ali.dto.SellerSignupRequestDto;
+import com.example.ali.dto.UserSignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,11 @@ public class Seller {
 
     @Column
     private LocalDateTime deletedAt; // db filed : delete_at
+
+    public Seller(SellerSignupRequestDto requestDto, String password) {
+        this.username = requestDto.getUsername();
+        this.password = password;
+        this.storeName = requestDto.getStoreName();
+        this.info = requestDto.getInfo();
+    }
 }
