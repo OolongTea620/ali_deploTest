@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
-    private static final String AUTHORITY = "user";
+    private static final String AUTHORITY = "USER";
 
     public UserDetailsImpl(User user) {
         this.user = user;

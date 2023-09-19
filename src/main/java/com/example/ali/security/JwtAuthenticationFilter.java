@@ -40,8 +40,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Autowired
     private SellerDetailsServiceImpl sellerDetailsService;
 
-    private SellerDetailsServiceImpl sellerDetailsServiceImpl;
-    private UserDetailsServiceImpl userDetailsServiceImpl;
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         this.jwtUtil = jwtUtil;
