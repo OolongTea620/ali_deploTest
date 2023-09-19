@@ -1,6 +1,7 @@
 package com.example.ali.controller;
 
 import com.example.ali.dto.ProductRequestDto;
+import com.example.ali.security.SellerDetailsImpl;
 import com.example.ali.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
