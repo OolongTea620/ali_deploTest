@@ -1,22 +1,18 @@
 package com.example.ali.security;
 
 import com.example.ali.dto.LoginRequestDto;
+import com.example.ali.dto.TokenDto;
 import com.example.ali.entity.RefreshToken;
 import com.example.ali.jwt.JwtUtil;
 import com.example.ali.repository.RefreshTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.sparta.post.dto.TokenDto;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -37,7 +33,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         this.jwtUtil = jwtUtil;
         this.refreshTokenRepository = refreshTokenRepository;
-        setFilterProcessesUrl("/api/auth/login");
+        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/seller/login");
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.example.ali.repository.RefreshTokenRepository;
 
 import com.example.ali.security.JwtAuthenticationFilter;
 import com.example.ali.security.JwtAuthorizationFilter;
+import com.example.ali.security.SellerDetailsServiceImpl;
 import com.example.ali.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -27,6 +28,7 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final SellerDetailsServiceImpl sellerDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -44,7 +46,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, sellerDetailsService);
     }
 
     @Bean

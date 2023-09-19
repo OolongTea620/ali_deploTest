@@ -1,4 +1,4 @@
-package com.sparta.post.dto;
+package com.example.ali.dto;
 
 import lombok.*;
 

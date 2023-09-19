@@ -1,5 +1,6 @@
 package com.example.ali.jwt;
 
+import com.example.ali.dto.TokenDto;
 import com.example.ali.entity.RefreshToken;
 import com.example.ali.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -78,8 +79,8 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public com.sparta.post.dto.TokenDto createAllToken(String username) {
-        return new com.sparta.post.dto.TokenDto(createToken(username,"Access"), createToken(username, "Refresh"));
+    public TokenDto createAllToken(String username) {
+        return new TokenDto(createToken(username,"Access"), createToken(username, "Refresh"));
     }
 
 
