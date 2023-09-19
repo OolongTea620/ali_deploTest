@@ -25,4 +25,8 @@ public class ProductStock {
     public void changeStock(Long stock) {
         this.stock -= stock;
     }
+
+    public void changeStock(Long stock) {
+        this.stock -= stock;
+    }
 }
