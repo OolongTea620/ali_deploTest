@@ -21,4 +21,12 @@ public class ProductStock {
     @OneToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public ProductStock(Long stock) {
+        this.stock = stock;
+    }
+
+    public void update(Long stock) {
+        this.stock = stock;
+    }
 }
