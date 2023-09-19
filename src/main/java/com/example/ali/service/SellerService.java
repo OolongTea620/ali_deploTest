@@ -1,20 +1,21 @@
 package com.example.ali.service;
 
+import com.example.ali.dto.MessageDataResponseDto;
 import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.SellerSignupRequestDto;
+import com.example.ali.dto.StoreRequestDto;
+import com.example.ali.dto.StoreResponseDto;
 import com.example.ali.entity.Seller;
 import com.example.ali.repository.SellerRepository;
-import java.util.Collections;
+import java.nio.channels.SeekableByteChannel;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,4 +52,31 @@ public class SellerService {
 
     }
 
+    // 상품 등록한 모든 셀러의 정보 조회
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getStores() {
+        List<Seller> storeList = sellerRepository.findAll();
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(storeList.stream().map(StoreResponseDto::new).toList());
+    }
+
+    @Transactional
+    public ResponseEntity<?> updateStore(StoreRequestDto requestDto) {
+        Seller store = sellerRepository.findById(requestDto.getSellerId()).orElseThrow(
+            () -> new NullPointerException("해당 셀러 유저가 없습니다.")
+        );
+        store.update(requestDto);
+        return ResponseEntity
+            .status(HttpStatus.ACCEPTED)
+            .body(new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store)));
+    }
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> deleteStore(Seller seller) {
+        // 셀러는 회원가입과 동시에 Store 생성이기에
+        sellerRepository.delete(seller);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(new MessageResponseDto("Store 삭제 성공"));
+    }
 }

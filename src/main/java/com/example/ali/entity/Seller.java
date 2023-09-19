@@ -1,6 +1,7 @@
 package com.example.ali.entity;
 
 import com.example.ali.dto.SellerSignupRequestDto;
+import com.example.ali.dto.StoreRequestDto;
 import com.example.ali.dto.UserSignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,6 +39,11 @@ public class Seller {
     public Seller(SellerSignupRequestDto requestDto, String password) {
         this.username = requestDto.getUsername();
         this.password = password;
+        this.storeName = requestDto.getStoreName();
+        this.info = requestDto.getInfo();
+    }
+
+    public void update(StoreRequestDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();
     }
