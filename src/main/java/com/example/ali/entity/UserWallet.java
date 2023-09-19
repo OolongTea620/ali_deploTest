@@ -18,4 +18,8 @@ public class UserWallet extends Timestamped{
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void changePoint(Long price) {
+        this.point -= price;
+    }
 }

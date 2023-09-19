@@ -22,6 +22,10 @@ public class User extends Timestamped{
     @Column(nullable = false)
     private String email;
 
+    @OneToOne
+    @JoinColumn(name = "user_wallet_id")
+    private UserWallet userWallet;
+
 
     public User(UserSignupRequestDto requestDto, String password) {
         this.username = requestDto.getUsername();
@@ -29,4 +33,6 @@ public class User extends Timestamped{
 
         this.password = password;
     }
+
+
 }
