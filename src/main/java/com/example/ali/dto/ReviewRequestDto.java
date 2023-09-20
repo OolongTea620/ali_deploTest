@@ -18,4 +18,9 @@ public class ReviewRequestDto {
     @Min(value = 1L) @Max(value= 5L)
     private Integer rating;
 
+    public ReviewRequestDto(Long orderId, String comment, Integer rating) {
+        this.orderId = orderId;
+        this.comment = comment;
+        this.rating = rating;
+    }
 }

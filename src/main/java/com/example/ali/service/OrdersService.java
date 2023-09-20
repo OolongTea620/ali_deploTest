@@ -21,7 +21,6 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final UserWalletRepository userWalletRepository;
 
 
     // 상품 주문
