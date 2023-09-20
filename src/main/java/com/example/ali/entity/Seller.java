@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+
 @SQLDelete(sql = "UPDATE seller SET deleted_at = CURRENT_TIMESTAMP where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Seller {
@@ -35,7 +36,7 @@ public class Seller {
     private String info;
 
     @Column
-    private LocalDateTime deletedAt; // db filed : delete_at
+    private LocalDateTime deletedAt;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "seller")
     private SellerWallet sellerWallet;
