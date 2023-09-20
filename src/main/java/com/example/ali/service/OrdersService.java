@@ -6,6 +6,7 @@ import com.example.ali.dto.OrdersResponseDto;
 import com.example.ali.entity.*;
 import com.example.ali.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrdersService {
+    private final SellerRepository sellerRepository;
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -26,7 +29,7 @@ public class OrdersService {
     public ResponseEntity<?> orderProduct(OrderRequestDto orderRequestDto, User user) {
         Product product = findProduct(orderRequestDto.getProductId());
         ProductStock productStock = product.getProductStock();
-        UserWallet userWallet = user.getUserWallet();
+        User realUser = findUser(user.getId());
 
         //구매 금액 선언
         Long totalPrice = orderRequestDto.getQnt() * product.getPrice();
