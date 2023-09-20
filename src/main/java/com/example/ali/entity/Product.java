@@ -4,6 +4,7 @@ import com.example.ali.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 //@SQLDelete 제대로 작동하는지 확인 필요
 @SQLDelete(sql = "UPDATE product SET deleted_at = CURRENT_TIMESTAMP, productStatus = 'DISCONTINUED' where id = ?")
