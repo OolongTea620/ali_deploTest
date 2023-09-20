@@ -84,6 +84,7 @@ public class SellerService {
             .status(HttpStatus.ACCEPTED)
             .body(new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store)));
     }
+
     @Transactional(readOnly = true)
     public ResponseEntity<?> deleteStore(Seller seller) {
         // 셀러는 회원가입과 동시에 Store 생성이기에
