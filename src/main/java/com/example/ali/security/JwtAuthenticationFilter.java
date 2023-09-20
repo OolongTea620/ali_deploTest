@@ -1,6 +1,7 @@
 package com.example.ali.security;
 
 import com.example.ali.dto.LoginRequestDto;
+import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.TokenDto;
 import com.example.ali.entity.RefreshToken;
 import com.example.ali.jwt.JwtUtil;
@@ -130,6 +131,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 //        String token = jwtUtil.createToken(username, role);
 //        jwtUtil.addJwtToCookie(token, response);
+
+        // 로그인 성공 메세지 전달
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        MessageResponseDto message = new MessageResponseDto( "로그인 성공");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(message));
     }
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
         response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
@@ -139,7 +146,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("로그인 실패");
         response.setStatus(401);
+
+        // 오류 메세지 전달
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        MessageResponseDto message = new MessageResponseDto("로그인 실패");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(message));
         // 추가
-        throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
+//        throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
     }
 }
