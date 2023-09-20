@@ -87,6 +87,7 @@ public class WebSecurityConfig{
                 .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/user/orders").permitAll()
 
+
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 

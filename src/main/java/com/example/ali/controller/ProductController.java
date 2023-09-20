@@ -46,9 +46,14 @@ public class ProductController {
     }
 
     //전체, 검색 상품 조회
-    @Operation(summary = "전체, 검색 상품 조회")
-    @GetMapping("/products")
+    @Operation(summary = "선택 상품 조회")
+    @GetMapping("/seller/products")
     public ResponseEntity<?> getSearchProduct(@RequestParam String keyword) {
         return productService.getSearchProduct(keyword);
+    }
+    @Operation(summary = "전체 상품 조회")
+    @GetMapping("/products")
+    public ResponseEntity<?> getProducts() {
+        return productService.getProducts();
     }
 }

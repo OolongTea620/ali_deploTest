@@ -1,11 +1,11 @@
 package com.example.ali.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.ali.dto.MsgDataResponseDto;
+import com.example.ali.dto.MessageDataResponseDto;
+
 
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
@@ -92,21 +92,24 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getSearchProduct(String keyword) {
-        List<Product> productList = new ArrayList<>();
 
-        //keyword 입력이 없을 경우 전체 리스트 조회..... 이렇게 구현해도되는지 모르겠음
-        if (keyword == null) {
-            productList = productRepository.findAll();
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(productList.stream().map(ProductResponseDto::new).toList());
-        }
+        List<Product> productList = new ArrayList<>();
 
         productList = productRepository.findAllByProductNameLike(keyword);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(productList.stream().map(ProductResponseDto::new).toList());
     }
+
+    public ResponseEntity<?> getProducts(){
+
+        List<Product> productList = productRepository.findAll();
+
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productList.stream().map(ProductResponseDto::new).toList());
+    }
+
 
     private Product findProductById(Long productId) {
         return productRepository.findById(productId)
