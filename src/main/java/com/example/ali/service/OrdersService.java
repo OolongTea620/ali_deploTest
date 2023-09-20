@@ -3,10 +3,7 @@ package com.example.ali.service;
 import com.example.ali.dto.OrderRequestDto;
 import com.example.ali.dto.OrderStatusRequestDto;
 import com.example.ali.dto.OrdersResponseDto;
-import com.example.ali.entity.Orders;
-import com.example.ali.entity.Product;
-import com.example.ali.entity.Seller;
-import com.example.ali.entity.User;
+import com.example.ali.entity.*;
 import com.example.ali.repository.OrdersRepository;
 import com.example.ali.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +24,27 @@ public class OrdersService {
     @Transactional
     public ResponseEntity<?> orderProduct(OrderRequestDto orderRequestDto, User user) {
         Product product = findProduct(orderRequestDto.getProductId());
+        ProductStock productStock = product.getProductStock();
+        UserWallet userWallet = user.getUserWallet();
+
+        //구매 금액 선언
+        Long totalPrice = orderRequestDto.getQnt() * product.getPrice();
+
         // 재고 확인
-        if(!(product.getProductStock().getStock() < orderRequestDto.getQnt())) {
+        if(!(product.getProductStock().getStock() > orderRequestDto.getQnt())) {
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
 
         // 유저 소지금 확인
-        if(!(user.getUserWallet().getPoint() > product.getPrice())) {
+        if(!(user.getUserWallet().getPoint() > totalPrice)) {
             throw new IllegalArgumentException("소지금이 부족합니다.");
         }
 
         // 재고 변경
-        product.getProductStock().changeStock(orderRequestDto.getQnt());
+        productStock.changeStock(orderRequestDto.getQnt());
 
         // 유저 소지금 변경
-        user.getUserWallet().changePoint(orderRequestDto.getQnt() * product.getPrice());
+        userWallet.changePoint(totalPrice);
 
         // 주문 생성
         ordersRepository.save(new Orders(orderRequestDto, user, product));
@@ -59,6 +62,7 @@ public class OrdersService {
     }
 
     // 배송 상태 변경
+    @Transactional
     public ResponseEntity<?> changeDeliveryStatus(Long ordersId, OrderStatusRequestDto orderStatusRequestDto, Seller seller) {
         Orders orders = findOrders(ordersId);
         // 셀러 확인

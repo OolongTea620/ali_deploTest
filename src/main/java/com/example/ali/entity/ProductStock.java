@@ -16,7 +16,6 @@ public class ProductStock {
     private Long Id;
 
     @Column
-    @Version
     private Long stock;
 
     @OneToOne
@@ -32,7 +31,7 @@ public class ProductStock {
         this.stock = stock;
     }
 
-    public void changeStock(Long stock) {
-        this.stock -= stock;
+    public void changeStock(Long requestStock) {
+        stock -= requestStock;
     }
 }

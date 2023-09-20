@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 //@SQLDelete 제대로 작동하는지 확인 필요
-@SQLDelete(sql = "UPDATE product SET deleted_at = CURRENT_TIMESTAMP, productStatus = 'DISCONTINUED' where id = ?")
+@SQLDelete(sql = "UPDATE product SET deleted_at = CURRENT_TIMESTAMP, product_status = 'DISCONTINUED' where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Product {
     @Id
