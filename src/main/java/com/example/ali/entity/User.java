@@ -22,9 +22,8 @@ public class User extends Timestamped{
     @Column(nullable = false)
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserWallet userWallet;
-
 
     public User(UserSignupRequestDto requestDto, String password, UserWallet userWallet) {
         this.username = requestDto.getUsername();

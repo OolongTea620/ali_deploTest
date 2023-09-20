@@ -21,6 +21,7 @@ public class Orders extends Timestamped{
     private Long quantity;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @ManyToOne
