@@ -16,14 +16,14 @@ public class UserWallet extends Timestamped{
     private Long Id;
 
     @Column
-    @ColumnDefault("1000000")
-    private Long point;
+    private Long point = 1000000L;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void changePoint(Long price) {
-        this.point -= price;
+    public void changePoint(Long requestPoint) {
+        this.point -= requestPoint;
     }
+
 }

@@ -27,6 +27,7 @@ public class UserService {
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
 
+
     @Transactional
     public ResponseEntity<?> signup(UserSignupRequestDto requestDto) {
         String username = requestDto.getUsername();
@@ -48,8 +49,6 @@ public class UserService {
         User user = new User(requestDto, password, userWallet);
         userRepository.save(user);
 
-        // 사용자 지갑 등록
-        userWalletRepository.save(new UserWallet());
 
         return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
     }
