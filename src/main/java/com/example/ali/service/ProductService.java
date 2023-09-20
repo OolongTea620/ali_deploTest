@@ -7,6 +7,7 @@ import com.example.ali.entity.Product;
 import com.example.ali.entity.ProductStock;
 import com.example.ali.entity.Seller;
 import com.example.ali.repository.ProductRepository;
+import com.example.ali.repository.ProductStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +22,17 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductStockRepository productStockRepository;
 
     @Transactional
     public ResponseEntity<?> createProduct(ProductRequestDto requestDto, Seller seller) {
 
-        ProductStock productStock = new ProductStock(requestDto.getStock());
-        Product product = new Product(requestDto, seller, productStock);
+        Product product = new Product(requestDto, seller);
+        ProductStock productStock = new ProductStock(requestDto.getStock(), product);
+        product.setProductStock(productStock);
 
         Product newProduct = productRepository.save(product);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));

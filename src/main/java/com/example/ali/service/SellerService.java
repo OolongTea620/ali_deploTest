@@ -6,9 +6,11 @@ import com.example.ali.dto.SellerSignupRequestDto;
 import com.example.ali.dto.StoreRequestDto;
 import com.example.ali.dto.StoreResponseDto;
 import com.example.ali.entity.Seller;
+import com.example.ali.entity.SellerWallet;
 import com.example.ali.entity.User;
 import com.example.ali.repository.SellerRepository;
 
+import com.example.ali.repository.SellerWalletRepository;
 import com.example.ali.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +27,10 @@ public class SellerService {
 
     private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final SellerWalletRepository sellerWalletRepository;
+    private final PasswordEncoder passwordEncoder;;
 
-
+    @Transactional
     public ResponseEntity<?> signup(SellerSignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -48,9 +51,15 @@ public class SellerService {
             throw new IllegalArgumentException("셀러명이 중복입니다.");
         }
 
+
+        // 셀러 지갑 등록
+        SellerWallet sellerWallet = new SellerWallet();
+        sellerWalletRepository.save(sellerWallet);
+
         // 셀러 등록
-        Seller seller = new Seller(requestDto, password);
+        Seller seller = new Seller(requestDto, password, sellerWallet);
         sellerRepository.save(seller);
+
 
         return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
 
@@ -75,6 +84,7 @@ public class SellerService {
             .status(HttpStatus.ACCEPTED)
             .body(new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store)));
     }
+
     @Transactional(readOnly = true)
     public ResponseEntity<?> deleteStore(Seller seller) {
         // 셀러는 회원가입과 동시에 Store 생성이기에

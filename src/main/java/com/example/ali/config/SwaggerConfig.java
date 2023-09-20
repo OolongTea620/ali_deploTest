@@ -27,12 +27,12 @@ public class SwaggerConfig {
                 .scheme("bearer") //
                 .bearerFormat("JWT")
                 .in(SecurityScheme.In.HEADER)
-                .name(HttpHeaders.AUTHORIZATION);
+                .name("Access_Token");
 
         SecurityScheme refreshTokenSecurityScheme = new SecurityScheme()
                 .type(SecurityScheme.Type.APIKEY)
                 .in(SecurityScheme.In.HEADER)
-                .name("Refresh Token");
+                .name("Refresh_Token");
 
         Components components = new Components()
                 .addSecuritySchemes(key, accessTokenSecurityScheme)
