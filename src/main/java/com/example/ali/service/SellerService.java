@@ -76,6 +76,7 @@ public class SellerService {
 
     @Transactional
     public ResponseEntity<?> updateStore(StoreRequestDto requestDto) {
+
         Seller store = sellerRepository.findById(requestDto.getSellerId()).orElseThrow(
             () -> new NullPointerException("해당 셀러 유저가 없습니다.")
         );
