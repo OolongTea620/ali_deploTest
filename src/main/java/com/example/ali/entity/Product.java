@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+
 @Setter
 @NoArgsConstructor
 //@SQLDelete 제대로 작동하는지 확인 필요
@@ -47,11 +48,13 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private ProductStock productStock;
 
-    public Product(ProductRequestDto requestDto, Seller seller) {
+
+    public Product(ProductRequestDto requestDto, Seller seller, String imageUrl) {
+
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
-        this.imageUrl = requestDto.getImageUrl();
+        this.imageUrl = imageUrl;
         this.seller = seller;
     }
 
@@ -60,7 +63,6 @@ public class Product {
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
-        this.imageUrl = requestDto.getImageUrl();
         this.productStatus = requestDto.getProductStatus();
 
     }
