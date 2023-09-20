@@ -2,8 +2,10 @@ package com.example.ali.service;
 
 import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.UserSignupRequestDto;
+import com.example.ali.dto.UserWalletResponseDto;
 import com.example.ali.entity.Seller;
 import com.example.ali.entity.User;
+import com.example.ali.entity.UserWallet;
 import com.example.ali.repository.SellerRepository;
 import com.example.ali.repository.UserRepository;
 import java.util.Optional;
@@ -40,5 +42,8 @@ public class UserService {
         return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
     }
 
-
+    public ResponseEntity<?> getUserPoint(User user) {
+        UserWallet userWallet = user.getUserWallet();
+        return ResponseEntity.ok(new UserWalletResponseDto(userWallet));
+    }
 }
