@@ -7,7 +7,7 @@ import com.example.ali.dto.StoreRequestDto;
 import com.example.ali.dto.StoreResponseDto;
 import com.example.ali.entity.Seller;
 import com.example.ali.repository.SellerRepository;
-import java.nio.channels.SeekableByteChannel;
+
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
