@@ -17,6 +17,8 @@ import java.util.List;
 public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final UserWalletRepository userWalletRepository;
 
 
     // 상품 주문
@@ -48,6 +50,7 @@ public class OrdersService {
         ordersRepository.save(new Orders(orderRequestDto, user, product));
         return ResponseEntity.ok().body("주문이 완료되었습니다.");
     }
+
 
     // 유저 주문 조회
     public List<OrdersResponseDto> getUserOrders(User user) {
