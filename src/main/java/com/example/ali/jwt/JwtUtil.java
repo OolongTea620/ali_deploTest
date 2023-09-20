@@ -96,6 +96,18 @@ public class JwtUtil {
         }
     }
 
+    public String getUserNameFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+            return claims.getSubject();
+        } catch (Exception e) {
+            return null; // 또는 적절한 예외 처리
+        }
+    }
+
     //JWT 생성
     //토큰 생성
     public String createToken(String username,String userType,String tokenType) {

@@ -37,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
             // security context에 인증 정보저장
             if (jwtUtil.validateToken(accessToken)) {
-                setAuthentication(jwtUtil.getUserTypeFromToken(accessToken), userType);
+                setAuthentication(jwtUtil.getUserNameFromToken(accessToken), userType);
             }
             // 어세스 토큰이 만료된 상황 && 리프레시 토큰 또한 존재하는 상황
             else if (refreshToken != null) {

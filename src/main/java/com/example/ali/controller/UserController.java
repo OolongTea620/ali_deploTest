@@ -1,6 +1,8 @@
 package com.example.ali.controller;
 
 import com.example.ali.dto.UserSignupRequestDto;
+import com.example.ali.security.SellerDetailsImpl;
+import com.example.ali.security.UserDetailsImpl;
 import com.example.ali.service.MailService;
 import com.example.ali.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
