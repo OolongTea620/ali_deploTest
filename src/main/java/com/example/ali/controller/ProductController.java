@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,9 +21,11 @@ public class ProductController {
 
     //seller 상품 등록
     @PostMapping("/seller/product")
-    public ResponseEntity<?> createProduct(@RequestBody ProductRequestDto requestDto,
-                                           @AuthenticationPrincipal SellerDetailsImpl sellerDetails) {//검증 필요
-        return productService.createProduct(requestDto, sellerDetails.getSeller());
+    public ResponseEntity<?> createProduct(
+            @AuthenticationPrincipal SellerDetailsImpl sellerDetails,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart(value = "requestDto", required = false) ProductRequestDto requestDto) throws IOException {
+        return productService.createProduct(requestDto, sellerDetails.getSeller(), image);
     }
 
     //seller 상품 수정
