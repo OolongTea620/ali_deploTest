@@ -22,16 +22,16 @@ public class User extends Timestamped{
     @Column(nullable = false)
     private String email;
 
-    @OneToOne
-    @JoinColumn(name = "user_wallet_id")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private UserWallet userWallet;
 
 
-    public User(UserSignupRequestDto requestDto, String password) {
+    public User(UserSignupRequestDto requestDto, String password, UserWallet userWallet) {
         this.username = requestDto.getUsername();
         this.email = requestDto.getEmail();
-
         this.password = password;
+        this.userWallet = userWallet;
+        userWallet.setUser(this);
     }
 
 

@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.ali.dto.MsgDataResponseDto;
+
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
 import com.example.ali.entity.Product;
@@ -34,15 +35,14 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductStockRepository productStockRepository;
-
     private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String S3Bucket;
 
-
     @Transactional
     public ResponseEntity<?> createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException{
+
 
         String imageUrl = getImage(image);
         Product product = new Product(requestDto, seller, imageUrl);
@@ -53,7 +53,7 @@ public class ProductService {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new MsgDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
+                .body(new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
     }
 
     private String getImage(MultipartFile image) throws IOException {
@@ -78,7 +78,7 @@ public class ProductService {
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(new MsgDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
+                .body(new MessageDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
     }
 
     @Transactional
@@ -87,7 +87,7 @@ public class ProductService {
         productRepository.delete(product);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new MsgDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
+                .body(new MessageDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
     }
 
     @Transactional(readOnly = true)

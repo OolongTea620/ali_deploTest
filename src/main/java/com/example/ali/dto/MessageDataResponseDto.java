@@ -1,5 +1,8 @@
 package com.example.ali.dto;
 
+import lombok.Getter;
+
+@Getter
 public class MessageDataResponseDto {
     private String msg;
     private Object data;

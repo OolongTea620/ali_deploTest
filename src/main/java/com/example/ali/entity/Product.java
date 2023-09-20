@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter//임시
+
+@Setter
 @NoArgsConstructor
 //@SQLDelete 제대로 작동하는지 확인 필요
 @SQLDelete(sql = "UPDATE product SET deleted_at = CURRENT_TIMESTAMP, productStatus = 'DISCONTINUED' where id = ?")
@@ -47,7 +48,9 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private ProductStock productStock;
 
+
     public Product(ProductRequestDto requestDto, Seller seller, String imageUrl) {
+
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
