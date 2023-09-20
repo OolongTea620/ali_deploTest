@@ -82,8 +82,10 @@ public class WebSecurityConfig{
                 .requestMatchers("/v3/api-docs/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
                 .requestMatchers("/swagger-ui/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
                 // 조회 API는 비로그인 유저도 접근 가능.
-                .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/seller/store").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll() // url : /api/products?keyword=”{keyword}”
+                .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/user/orders").permitAll()
 
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );

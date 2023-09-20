@@ -45,13 +45,12 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private ProductStock productStock;
 
-    public Product(ProductRequestDto requestDto, Seller seller, ProductStock productStock) {
+    public Product(ProductRequestDto requestDto, Seller seller) {
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
         this.imageUrl = requestDto.getImageUrl();
         this.seller = seller;
-        this.productStock = productStock;
     }
 
     //product 수정
@@ -61,7 +60,6 @@ public class Product {
         this.info = requestDto.getInfo();
         this.imageUrl = requestDto.getImageUrl();
         this.productStatus = requestDto.getProductStatus();
-        this.productStock.update(requestDto.getStock());
 
     }
 

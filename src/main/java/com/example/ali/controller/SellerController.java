@@ -46,5 +46,4 @@ public class SellerController {
         return sellerService.deleteStore(sellerDetails.getSeller());
     }
 
-
 }
