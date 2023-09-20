@@ -2,7 +2,9 @@ package com.example.ali.service;
 
 import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.UserSignupRequestDto;
+import com.example.ali.entity.Seller;
 import com.example.ali.entity.User;
+import com.example.ali.repository.SellerRepository;
 import com.example.ali.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -22,11 +25,13 @@ public class UserService {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        // username 중복 확인
+        // user username 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
-        if(checkUsername.isPresent()){
+        Optional<Seller> checkSellername = sellerRepository.findByUsername(username);
+        if(checkUsername.isPresent() || checkSellername.isPresent() ){
             throw new IllegalArgumentException("중복된 사용자");
         }
+
 
         // 사용자 등록
         User user = new User(requestDto, password);

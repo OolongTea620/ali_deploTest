@@ -6,8 +6,10 @@ import com.example.ali.dto.SellerSignupRequestDto;
 import com.example.ali.dto.StoreRequestDto;
 import com.example.ali.dto.StoreResponseDto;
 import com.example.ali.entity.Seller;
+import com.example.ali.entity.User;
 import com.example.ali.repository.SellerRepository;
-import java.nio.channels.SeekableByteChannel;
+
+import com.example.ali.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SellerService {
 
+    private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -33,8 +36,9 @@ public class SellerService {
 
 
         // username 중복 확인
-        Optional<Seller> checkUsername = sellerRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
+        Optional<User> checkUsername = userRepository.findByUsername(username);
+        Optional<Seller> checkSellername = sellerRepository.findByUsername(username);
+        if (checkUsername.isPresent()||checkSellername.isPresent()) {
             throw new IllegalArgumentException("ID가 중복입니다.");
         }
 

@@ -1,6 +1,6 @@
 package com.example.ali.service;
 
-import com.example.ali.dto.MsgDataResponseDto;
+import com.example.ali.dto.MessageDataResponseDto;
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
 import com.example.ali.entity.Product;
@@ -31,7 +31,7 @@ public class ProductService {
         Product newProduct = productRepository.save(product);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new MsgDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
+                .body(new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class ProductService {
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body(new MsgDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
+                .body(new MessageDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
     }
 
     @Transactional
@@ -50,7 +50,7 @@ public class ProductService {
         productRepository.delete(product);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new MsgDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
+                .body(new MessageDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
     }
 
     @Transactional(readOnly = true)
