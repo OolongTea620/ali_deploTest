@@ -4,8 +4,7 @@ import com.example.ali.dto.OrderRequestDto;
 import com.example.ali.dto.OrderStatusRequestDto;
 import com.example.ali.dto.OrdersResponseDto;
 import com.example.ali.entity.*;
-import com.example.ali.repository.OrdersRepository;
-import com.example.ali.repository.ProductRepository;
+import com.example.ali.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,9 +41,8 @@ public class OrdersService {
 
         // 재고 변경
         productStock.changeStock(orderRequestDto.getQnt());
-
-        // 유저 소지금 변경
-        userWallet.changePoint(totalPrice);
+        // 소지금 차감
+        realUser.getUserWallet().changePoint(totalPrice);
 
         // 주문 생성
         ordersRepository.save(new Orders(orderRequestDto, user, product));
@@ -56,10 +54,12 @@ public class OrdersService {
         return ordersRepository.findAllByUser(user).stream().map(OrdersResponseDto::new).toList();
     }
 
+
     // 셀러 주문 조회
     public List<OrdersResponseDto> getSellerOrders(Seller seller) {
         return ordersRepository.findByProductSellerUsername(seller.getUsername()).stream().map(OrdersResponseDto::new).toList();
     }
+
 
     // 배송 상태 변경
     @Transactional
@@ -86,6 +86,20 @@ public class OrdersService {
     private Product findProduct(Long id) {
         return productRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다.")
+        );
+    }
+
+    // 유저 정보 찾기
+    private User findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+        );
+    }
+
+    // 셀러 정보 찾기
+    private Seller findSeller(Long id) {
+        return sellerRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 셀러를 찾을 수 없습니다.")
         );
     }
 }
