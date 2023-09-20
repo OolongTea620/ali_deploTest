@@ -26,10 +26,11 @@ public class ReviewService {
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
 
-    public ResponseEntity<?> getProductReviewList(Long productId) {
+    public ResponseEntity<List<ReviewResponseDto>> getProductReviewList(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 상품이 존재하지 않습니다"));
-        // Order_id로 조인하고 그 결과를 가져오기
+        
+        // Order_id로 조인하고 그 결과fmf가져오기
         List<Orders> orders = ordersRepository.findAllByProduct(product);
         List<Review> productReviews = reviewRepository.findAllByOrdersIn(orders);
 
@@ -41,9 +42,9 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> createReview(ReviewRequestDto requestDto, User user) {
+    public ResponseEntity<ReviewResponseDto> createReview(ReviewRequestDto requestDto, User user) {
         Orders order = ordersRepository.findById(requestDto.getOrderId())
-                .orElseThrow(() -> new NullPointerException("해당하는 상품이 존재하지 않습니다"));
+                .orElseThrow(() -> new NullPointerException("해당하는 주문이 존재하지 않습니다"));
 
         if (!order.getUser().equals(user)) {
             throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
@@ -56,7 +57,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateReview(ReviewRequestDto requestDto, Long reviewId, User user) {
+    public ResponseEntity<ReviewResponseDto> updateReview(ReviewRequestDto requestDto, Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NullPointerException("해당하는 리뷰가 존재하지 않습니다"));
         if (!review.getOrders().getUser().equals(user)) {
@@ -67,7 +68,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteReview(Long reviewId, User user) {
+    public ResponseEntity<MessageResponseDto> deleteReview(Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NullPointerException("해당하는 리뷰가 존재하지 않습니다"));
 

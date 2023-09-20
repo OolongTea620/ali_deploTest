@@ -39,6 +39,11 @@ public class Review {
         this.orders = order;
     }
 
+    public Review(String comment, Integer rating) {
+        this.comment = comment;
+        this.rating = rating;
+    }
+
     public void update(ReviewRequestDto requestDto) {
         this.comment = requestDto.getComment();
         this.rating = requestDto.getRating();
