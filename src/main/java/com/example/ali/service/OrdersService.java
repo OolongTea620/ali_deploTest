@@ -32,6 +32,11 @@ public class OrdersService {
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
 
+        // 유저 소지금 확인
+        if(!(user.getUserWallet().getPoint() > product.getPrice())) {
+            throw new IllegalArgumentException("소지금이 부족합니다.");
+        }
+
         // 재고 변경
         product.getProductStock().changeStock(orderRequestDto.getQnt());
 
