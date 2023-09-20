@@ -1,5 +1,6 @@
 package com.example.ali.entity;
 
+import com.example.ali.dto.ReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +29,18 @@ public class Review {
     @Column
     private LocalDateTime deletedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // fetch 조인을 위한 더하기
     @JoinColumn(name = "order_id")
     private Orders orders;
 
+    public Review(ReviewRequestDto requestDto, Orders order) {
+        this.comment = requestDto.getComment();
+        this.rating = requestDto.getRating();
+        this.orders = order;
+    }
+
+    public void update(ReviewRequestDto requestDto) {
+        this.comment = requestDto.getComment();
+        this.rating = requestDto.getRating();
+    }
 }

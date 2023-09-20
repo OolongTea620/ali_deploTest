@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -22,8 +23,9 @@ public class ProductStock {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public ProductStock(Long stock) {
+    public ProductStock(Long stock, Product product) {
         this.stock = stock;
+        this.product = product;
     }
 
     public void update(Long stock) {

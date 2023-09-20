@@ -3,6 +3,7 @@ package com.example.ali.entity;
 import com.example.ali.dto.SellerSignupRequestDto;
 import com.example.ali.dto.StoreRequestDto;
 import com.example.ali.dto.UserSignupRequestDto;
+import com.example.ali.repository.SellerWalletRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,11 +37,16 @@ public class Seller {
     @Column
     private LocalDateTime deletedAt; // db filed : delete_at
 
-    public Seller(SellerSignupRequestDto requestDto, String password) {
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "seller")
+    private SellerWallet sellerWallet;
+
+    public Seller(SellerSignupRequestDto requestDto, String password, SellerWallet sellerWallet) {
         this.username = requestDto.getUsername();
         this.password = password;
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();
+        this.sellerWallet = sellerWallet;
+        sellerWallet.setSeller(this);
     }
 
     public void update(StoreRequestDto requestDto) {

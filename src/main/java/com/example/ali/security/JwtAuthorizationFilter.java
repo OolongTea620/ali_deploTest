@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,7 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // 어세스 토큰값이 유효하다면 setAuthentication를 통해
             // security context에 인증 정보저장
             if (jwtUtil.validateToken(accessToken)) {
-                setAuthentication(jwtUtil.getUserTypeFromToken(accessToken), userType);
+                setAuthentication(jwtUtil.getUserNameFromToken(accessToken), userType);
             }
             // 어세스 토큰이 만료된 상황 && 리프레시 토큰 또한 존재하는 상황
             else if (refreshToken != null) {
@@ -46,14 +45,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 // 리프레시 토큰이 유효하고 리프레시 토큰이 DB와 비교했을때 똑같다면
                 if (isRefreshToken) {
                     // 리프레시 토큰으로 아이디 정보 가져오기
-                    String username = jwtUtil.getUserTypeFromToken(refreshToken);
+                    String username = jwtUtil.getUserNameFromToken(refreshToken);
                     userType = jwtUtil.getUserTypeFromToken(refreshToken); // 리프레시 토큰에서 사용자 유형 정보 추출
                     // 새로운 어세스 토큰 발급
                     String newAccessToken = jwtUtil.createToken(username, userType, "Access");
                     // 헤더에 어세스 토큰 추가
                     jwtUtil.setHeaderAccessToken(res, newAccessToken);
                     // Security context에 인증 정보 넣기
-                    setAuthentication(jwtUtil.getUserTypeFromToken(newAccessToken), userType);
+                    setAuthentication(jwtUtil.getUserNameFromToken(newAccessToken), userType);
                 }
                 // 리프레시 토큰이 만료 || 리프레시 토큰이 DB와 비교했을때 똑같지 않다면
                 else {
@@ -70,7 +69,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = createAuthentication(username, userType);
         context.setAuthentication(authentication);
-        log.error("인증 처리");
         SecurityContextHolder.setContext(context);
     }
 

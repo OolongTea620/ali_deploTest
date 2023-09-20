@@ -4,6 +4,7 @@ import com.example.ali.dto.ProductRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -11,6 +12,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+
+@Setter
 @NoArgsConstructor
 //@SQLDelete 제대로 작동하는지 확인 필요
 @SQLDelete(sql = "UPDATE product SET deleted_at = CURRENT_TIMESTAMP, productStatus = 'DISCONTINUED' where id = ?")
@@ -45,13 +48,14 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private ProductStock productStock;
 
-    public Product(ProductRequestDto requestDto, Seller seller, ProductStock productStock) {
+
+    public Product(ProductRequestDto requestDto, Seller seller, String imageUrl) {
+
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
-        this.imageUrl = requestDto.getImageUrl();
+        this.imageUrl = imageUrl;
         this.seller = seller;
-        this.productStock = productStock;
     }
 
     //product 수정
@@ -59,9 +63,7 @@ public class Product {
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
-        this.imageUrl = requestDto.getImageUrl();
         this.productStatus = requestDto.getProductStatus();
-        this.productStock.update(requestDto.getStock());
 
     }
 

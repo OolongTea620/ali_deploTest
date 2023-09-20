@@ -43,7 +43,5 @@ public class Orders extends Timestamped{
         this.orderStatus = orderStatus;
     }
 
-    public void changeStock(Long qnt) {
 
-    }
 }
