@@ -5,8 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.ali.dto.MessageDataResponseDto;
-
-
+import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
 import com.example.ali.entity.Product;
@@ -38,11 +37,10 @@ public class ProductService {
     private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
-    private String S3Bucket;
+    public String S3Bucket;
 
     @Transactional
     public ResponseEntity<?> createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException{
-
 
         String imageUrl = getImage(image);
         Product product = new Product(requestDto, seller, imageUrl);
@@ -54,21 +52,6 @@ public class ProductService {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
-    }
-
-    private String getImage(MultipartFile image) throws IOException {
-        String originName = UUID.randomUUID().toString();
-        long size = image.getSize();
-
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(image.getContentType());
-        objectMetadata.setContentLength(size);
-
-        amazonS3Client.putObject(
-                new PutObjectRequest(S3Bucket, originName, image.getInputStream(), objectMetadata )
-                        .withCannedAcl(CannedAccessControlList.PublicRead)
-        );
-        return amazonS3Client.getUrl(S3Bucket, originName).toString();
     }
 
     @Transactional
@@ -87,7 +70,7 @@ public class ProductService {
         productRepository.delete(product);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new MessageDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
+                .body(new MessageResponseDto("상품 삭제 성공"));
     }
 
     @Transactional(readOnly = true)
@@ -114,6 +97,21 @@ public class ProductService {
     private Product findProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("product 찾을 수 없음"));
+    }
+
+    private String getImage(MultipartFile image) throws IOException {
+        String originName = UUID.randomUUID().toString();
+        long size = image.getSize();
+
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(image.getContentType());
+        objectMetadata.setContentLength(size);
+
+        amazonS3Client.putObject(
+                new PutObjectRequest(S3Bucket, originName, image.getInputStream(), objectMetadata )
+                        .withCannedAcl(CannedAccessControlList.PublicRead)
+        );
+        return amazonS3Client.getUrl(S3Bucket, originName).toString();
     }
 
 }
