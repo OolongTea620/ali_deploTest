@@ -1,11 +1,11 @@
 package com.example.ali.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.ali.dto.MsgDataResponseDto;
+import com.example.ali.dto.MessageDataResponseDto;
+
 
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
