@@ -1,5 +1,6 @@
 package com.example.ali.service;
 
+import com.example.ali.dto.MessageDataResponseDto;
 import com.example.ali.dto.OrderRequestDto;
 import com.example.ali.dto.OrderStatusRequestDto;
 import com.example.ali.dto.OrdersResponseDto;
@@ -7,6 +8,7 @@ import com.example.ali.entity.*;
 import com.example.ali.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +27,7 @@ public class OrdersService {
 
     // 상품 주문
     @Transactional
-    public ResponseEntity<?> orderProduct(OrderRequestDto orderRequestDto, User user) {
+    public ResponseEntity<MessageDataResponseDto> orderProduct(OrderRequestDto orderRequestDto, User user) {
         Product product = findProduct(orderRequestDto.getProductId());
         ProductStock productStock = product.getProductStock();
         User realUser = findUser(user.getId());
@@ -48,21 +50,29 @@ public class OrdersService {
         // 소지금 차감
         realUser.getUserWallet().changePoint(totalPrice);
 
+        Orders orders = new Orders(orderRequestDto, user, product);
+        OrdersResponseDto ordersResponseDto = new OrdersResponseDto(orders);
         // 주문 생성
-        ordersRepository.save(new Orders(orderRequestDto, user, product));
-        return ResponseEntity.ok().body("주문이 완료되었습니다.");
+        ordersRepository.save(orders);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new MessageDataResponseDto("주문 성공", ordersResponseDto));
     }
 
-
     // 유저 주문 조회
-    public List<OrdersResponseDto> getUserOrders(User user) {
-        return ordersRepository.findAllByUser(user).stream().map(OrdersResponseDto::new).toList();
+    public ResponseEntity<?> getUserOrders(User user) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageDataResponseDto("주문 조회 성공", ordersRepository.findAllByUser(user).stream().map(OrdersResponseDto::new).toList()));
     }
 
 
     // 셀러 주문 조회
-    public List<OrdersResponseDto> getSellerOrders(Seller seller) {
-        return ordersRepository.findByProductSellerUsername(seller.getUsername()).stream().map(OrdersResponseDto::new).toList();
+    public ResponseEntity<?> getSellerOrders(Seller seller) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new MessageDataResponseDto("주문 조회 성공", ordersRepository.findByProductSellerUsername(seller.getUsername()).stream().map(OrdersResponseDto::new).toList()));
+
     }
 
 
@@ -76,7 +86,7 @@ public class OrdersService {
         }
         // 배송 상태 변경
         orders.changeDeliveryStatus(orderStatusRequestDto.getStatus());
-        return ResponseEntity.ok().body("배송 상태가 변경되었습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageDataResponseDto("배송 상태 변경 성공", new OrdersResponseDto(orders)));
     }
 
     // 주문 찾기

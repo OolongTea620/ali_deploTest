@@ -23,7 +23,7 @@ public class OrdersController {
     // 주문 확인 조회
     @Operation(summary = "주문 확인 조회")
     @GetMapping("/seller/orders")
-    public List<OrdersResponseDto> getSellerOrders(@AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
+    public ResponseEntity<?> getSellerOrders(@AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
         return ordersService.getSellerOrders(sellerDetails.getSeller());
     }
 
@@ -44,8 +44,8 @@ public class OrdersController {
 
     // 주문 조회 (유저 본인의 주문 내역 조회)
     @Operation(summary = "주문 조회 (유저 본인의 주문 내역 조회)")
-    @GetMapping("user/orders")
-    public List<OrdersResponseDto> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @GetMapping("/user/orders")
+    public ResponseEntity<?> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ordersService.getUserOrders(userDetails.getUser());
     }
 
