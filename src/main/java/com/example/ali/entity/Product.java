@@ -64,7 +64,6 @@ public class Product {
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
         this.productStatus = requestDto.getProductStatus();
-
     }
 
 }

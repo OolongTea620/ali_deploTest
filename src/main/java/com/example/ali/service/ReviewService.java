@@ -49,11 +49,11 @@ public class ReviewService {
         if (!order.getUser().equals(user)) {
             throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
         }
+        Review review = reviewRepository.save(new Review(requestDto,order));
 
-        Review review = new Review(requestDto,order);
         return ResponseEntity
                 .status(HttpStatus.CREATED.value())
-                .body(new ReviewResponseDto(reviewRepository.save(review)));
+                .body(new ReviewResponseDto(review));
     }
 
     @Transactional
