@@ -73,6 +73,15 @@ public class Seller {
         sellerWallet.setSeller(this);
     }
 
+
+
+    public Seller(String username, String password, String storeName, String info) {
+        this.username = username;
+        this.password = password;
+        this.storeName = storeName;
+        this.info = info;
+    }
+
     public void update(StoreRequestDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();

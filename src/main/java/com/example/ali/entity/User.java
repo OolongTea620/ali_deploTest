@@ -50,4 +50,10 @@ public class User extends Timestamped{
         this.userWallet = userWallet;
         userWallet.setUser(this);
     }
+
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 }
