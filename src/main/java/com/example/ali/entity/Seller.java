@@ -50,6 +50,11 @@ public class Seller {
         sellerWallet.setSeller(this);
     }
 
+    public Seller(String store1, String info1) {
+        this.storeName = store1;
+        this.info = info1;
+    }
+
     public void update(StoreRequestDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();

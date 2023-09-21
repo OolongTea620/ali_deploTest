@@ -42,6 +42,7 @@ class ProductServiceTest {
     @Mock
     AmazonS3 amazonS3Client;
 
+
     @Test
     @DisplayName("상품 생성 성공")
     void createProduct() throws IOException {
@@ -54,7 +55,8 @@ class ProductServiceTest {
         ProductRequestDto requestDto = new ProductRequestDto("축구공", 100L, 10L, "둥글함");
         Seller seller = new Seller();
         Product product = new Product(requestDto, seller, "https://www.naver.com/");
-        product.setProductStock(new ProductStock());
+        ProductStock productStock = new ProductStock(requestDto.getStock(), product);
+        product.setProductStock(productStock);
 
         //when
         when(amazonS3Client.getUrl(isNull(), anyString())).thenReturn(new URL("https://www.naver.com/"));
@@ -70,8 +72,7 @@ class ProductServiceTest {
         Assertions.assertThat(productResponseDto.getProductName()).isEqualTo("축구공");
         Assertions.assertThat(productResponseDto.getInfo()).isEqualTo("둥글함");
         Assertions.assertThat(productResponseDto.getPrice()).isEqualTo(100);
-
-        Assertions.assertThat(productResponseDto.getProductName()).isNotEqualTo("배구공");
+        Assertions.assertThat(productResponseDto.getStock()).isEqualTo(10);
     }
 
     @Test
@@ -82,7 +83,8 @@ class ProductServiceTest {
         ProductRequestDto requestDto1 = new ProductRequestDto("축구공", 100L, 10L, "둥글함");
         ProductRequestDto requestDto2 = new ProductRequestDto("수정된축구공", 120L, 11L, "부드러움");
         Product product = new Product(requestDto1, new Seller(), "https://si/");
-        product.setProductStock(new ProductStock());
+        ProductStock productStock = new ProductStock(requestDto1.getStock(), product);
+        product.setProductStock(productStock);
 
         //when
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(product));
@@ -95,6 +97,7 @@ class ProductServiceTest {
         Assertions.assertThat(productResponseDto.getProductName()).isEqualTo("수정된축구공");
         Assertions.assertThat(productResponseDto.getInfo()).isEqualTo("부드러움");
         Assertions.assertThat(productResponseDto.getPrice()).isEqualTo(120);
+        Assertions.assertThat(productResponseDto.getStock()).isEqualTo(11);
     }
 
     @Test
@@ -164,16 +167,3 @@ class ProductServiceTest {
         Assertions.assertThat(responseDtoList2).hasSize(1);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

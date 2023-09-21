@@ -8,4 +8,11 @@ public class SellerSignupRequestDto {
     private String password;
     private String storeName;
     private String info;
+
+    public SellerSignupRequestDto(String testSeller, String number, String storeName, String storeInfo) {
+        this.username = testSeller;
+        this.password = number;
+        this.storeName = storeName;
+        this.info = storeInfo;
+    }
 }
