@@ -1,5 +1,6 @@
 package com.example.ali.service;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -51,10 +52,10 @@ class UserServiceTest {
 
     // 필드에 대한 Mock 객체들을 초기화
     // ullPointerException 또는 다른 예외 발생 예방
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
+
+//    @BeforeEach
+//    public void setup() {
+//    }
 
     @Test
     @DisplayName("유저 회원가입 성공")
@@ -97,20 +98,19 @@ class UserServiceTest {
     void getUserPoint() {
 
         //given
-        UserWallet userWallet = new UserWallet();
-        userWallet.setPoint(1000L);
+        UserWallet userWallet = new UserWallet(1000L);
+        userWallet.setId(1L);
 
-        User user = new User();
-        user.setUserWallet(userWallet);
+        User user = new User("user", "1234", "user@naver.com", userWallet);
+        user.setId(1L);
 
-        //when
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-
+        // when
         ResponseEntity<?> responseEntity = userService.getUserPoint(user);
 
         //then
-        verify(userRepository, times(1)).findById(anyLong());
-
+//        verify(userRepository, times(1)).findById(user.getId());
+        UserWalletResponseDto responseDto = (UserWalletResponseDto) responseEntity.getBody();
+        assertThat(responseDto.getPoint()).isEqualTo(1000);
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertNotNull(responseEntity.getBody());
     }

@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter // test
 @NoArgsConstructor
-
 @SQLDelete(sql = "UPDATE seller SET deleted_at = CURRENT_TIMESTAMP where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Seller {
@@ -63,8 +62,25 @@ public class Seller {
         this.info = info;
     }
 
+    //test
+    public Seller(String username, String password, String storeName, String info,
+        SellerWallet sellerWallet) {
+        this.username = username;
+        this.password = password;
+        this.storeName = storeName;
+        this.info = info;
+        this.sellerWallet = sellerWallet;
+        sellerWallet.setSeller(this);
+    }
+
     public void update(StoreRequestDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();
+    }
+
+    //test
+    public void update(String storeName, String info) {
+        this.storeName = storeName;
+        this.info = info;
     }
 }

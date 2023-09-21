@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(MockitoExtension.class)
 class SellerServiceTest {
 
-    @InjectMocks
+    @InjectMocks // 의존성을 필요로 하는 field 에 붙이는 애노테이션으로, @Mock 이나 @Spy 애노테이션이 붙은 field 를 주입받는다.
     private SellerService sellerService;
 
     @Mock
@@ -50,10 +50,10 @@ class SellerServiceTest {
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    public void setUp(){
-        MockitoAnnotations.openMocks(this);
-    }
+//    @BeforeEach
+//    public void setUp(){
+//        MockitoAnnotations.openMocks(this);
+//    }
 
     @Test
     @DisplayName("셀러의 회원가입 성공")
@@ -73,7 +73,7 @@ class SellerServiceTest {
 
         when(userRepository.findByUsername("testSeller")).thenReturn(Optional.empty());
         when(sellerRepository.findByUsername("testSeller")).thenReturn(Optional.empty());
-        when(sellerRepository.findByStoreName("testSeller")).thenReturn(Optional.empty());
+        when(sellerRepository.findByStoreName("storeName")).thenReturn(Optional.empty());
 
         when(sellerWalletRepository.save(any(SellerWallet.class))).thenReturn(sellerWallet);
         when(sellerRepository.save(any(Seller.class))).thenReturn(seller);
@@ -120,8 +120,10 @@ class SellerServiceTest {
         requestDto.setInfo("Info1 update");
         requestDto.setStoreName("Store1 update");
 
-        Seller seller = new Seller("Store1", "Info1");
-        seller.setId(1L);
+
+        Seller seller = new Seller();
+//        Seller seller = new Seller("Store1", "Info1");
+//        seller.setId(1L);
 
         // when
         when(sellerRepository.findById(1L)).thenReturn(Optional.of(seller));
@@ -133,6 +135,7 @@ class SellerServiceTest {
         MessageDataResponseDto responseBody = (MessageDataResponseDto) responseEntity.getBody();
         StoreResponseDto updatedStore = (StoreResponseDto) responseBody.getData();
 
+        assertEquals(seller.getStoreName(), "Store1 update");
         assertEquals("Store1 update", updatedStore.getStoreName());
         assertEquals("Info1 update", updatedStore.getInfo());
 

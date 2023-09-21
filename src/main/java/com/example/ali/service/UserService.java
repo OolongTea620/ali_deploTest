@@ -55,6 +55,6 @@ public class UserService {
 
     public ResponseEntity<?> getUserPoint(User user) {
         UserWallet userWallet = user.getUserWallet();
-        return ResponseEntity.ok(new UserWalletResponseDto(userWallet));
+        return ResponseEntity.status(HttpStatus.OK).body(new UserWalletResponseDto(userWallet));
     }
 }

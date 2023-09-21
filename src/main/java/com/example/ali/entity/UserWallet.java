@@ -22,6 +22,11 @@ public class UserWallet extends Timestamped{
     @JoinColumn(name = "user_id")
     private User user;
 
+    //test
+    public UserWallet(Long point) {
+        this.point = point;
+    }
+
     public void changePoint(Long requestPoint) {
         this.point -= requestPoint;
     }

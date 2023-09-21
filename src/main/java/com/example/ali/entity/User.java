@@ -41,4 +41,13 @@ public class User extends Timestamped{
         this.email = requestDto.getEmail();
         this.password = password;
     }
+
+    //test
+    public User(String username, String password, String email, UserWallet userWallet) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.userWallet = userWallet;
+        userWallet.setUser(this);
+    }
 }
