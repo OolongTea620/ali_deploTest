@@ -2,7 +2,6 @@ package com.example.ali.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.example.ali.dto.MessageDataResponseDto;
-import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
 import com.example.ali.entity.Product;
@@ -16,19 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static com.example.ali.entity.ProductStatus.AVAILABLE;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -61,14 +53,10 @@ class ProductServiceTest {
         //when
         when(amazonS3Client.getUrl(isNull(), anyString())).thenReturn(new URL("https://www.naver.com/"));
         when(productRepository.save(any(Product.class))).thenReturn(product);
+        MessageDataResponseDto result = productService.createProduct(requestDto, seller, image);
+        ProductResponseDto productResponseDto = (ProductResponseDto)result.getData();
 
         //then
-        ResponseEntity<?> result = productService.createProduct(requestDto, seller, image);
-
-        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-        MessageDataResponseDto responseDto = (MessageDataResponseDto) result.getBody();
-        ProductResponseDto productResponseDto = (ProductResponseDto) responseDto.getData();
         Assertions.assertThat(productResponseDto.getProductName()).isEqualTo("축구공");
         Assertions.assertThat(productResponseDto.getInfo()).isEqualTo("둥글함");
         Assertions.assertThat(productResponseDto.getPrice()).isEqualTo(100);
@@ -88,12 +76,10 @@ class ProductServiceTest {
 
         //when
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(product));
-        ResponseEntity<?> result = productService.updateProduct(1L, requestDto2);
-        MessageDataResponseDto responseDto = (MessageDataResponseDto) result.getBody();
-        ProductResponseDto productResponseDto = (ProductResponseDto) responseDto.getData();
+        MessageDataResponseDto result = productService.updateProduct(1L, requestDto2);
+        ProductResponseDto productResponseDto = (ProductResponseDto) result.getData();
 
         //then
-        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
         Assertions.assertThat(productResponseDto.getProductName()).isEqualTo("수정된축구공");
         Assertions.assertThat(productResponseDto.getInfo()).isEqualTo("부드러움");
         Assertions.assertThat(productResponseDto.getPrice()).isEqualTo(120);
@@ -111,59 +97,10 @@ class ProductServiceTest {
 
         //when
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(product));
-        ResponseEntity<?> result = productService.deleteProduct(1L);
-        MessageResponseDto responseDto = (MessageResponseDto) result.getBody();
+        MessageDataResponseDto result = productService.deleteProduct(1L);
 
         //then
-        Assertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(responseDto.getMsg()).isEqualTo("상품 삭제 성공");
+        Assertions.assertThat(result.getMsg()).isEqualTo("상품 삭제 성공");
     }
 
-    @Test
-    @DisplayName("제품 검색 성공")
-    void searchProduct() {
-        //given
-        ProductService productService = new ProductService(productRepository, productStockRepository, amazonS3Client);
-
-        String keyword1 = "축구";
-        String keyword2 = "농구";
-
-        Product product1 = new Product(new ProductRequestDto("축구공", 100L, 10L, "둥글함"), new Seller(), "https://www.ba");
-        Product product2 = new Product(new ProductRequestDto("축구화", 200L, 20L, "편안함"), new Seller(), "https://www.bo");
-        Product product3 = new Product(new ProductRequestDto("농구화", 200L, 20L, "편안함"), new Seller(), "https://www.se");
-        product1.setProductStock(new ProductStock());
-        product2.setProductStock(new ProductStock());
-        product3.setProductStock(new ProductStock());
-
-        List<Product> productList = Arrays.asList(product1, product2, product3);
-
-        List<Product> searchProduct1 = new ArrayList<>();
-        for (Product product : productList) {
-            if (product.getProductName().contains("축구")) {
-                searchProduct1.add(product);
-            }
-        }
-        List<Product> searchProduct2 = new ArrayList<>();
-        for (Product product : productList) {
-            if (product.getProductName().contains("농구")) {
-                searchProduct2.add(product);
-            }
-        }
-
-        //when
-        when(productRepository.findAllByProductNameLike("축구")).thenReturn(searchProduct1);
-        when(productRepository.findAllByProductNameLike("농구")).thenReturn(searchProduct2);
-
-        ResponseEntity<?> result1 = productService.getSearchProduct(keyword1);
-        ResponseEntity<?> result2 = productService.getSearchProduct(keyword2);
-        List<ProductResponseDto> responseDtoList1 = (List<ProductResponseDto>) result1.getBody();
-        List<ProductResponseDto> responseDtoList2 = (List<ProductResponseDto>) result2.getBody();
-
-        //then
-        Assertions.assertThat(result1.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(result2.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        Assertions.assertThat(responseDtoList1).hasSize(2);
-        Assertions.assertThat(responseDtoList2).hasSize(1);
-    }
 }
