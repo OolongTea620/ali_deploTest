@@ -25,6 +25,7 @@ public class OrdersController {
     @GetMapping("/seller/orders")
     public List<OrdersResponseDto> getSellerOrders(@AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
         return ordersService.getSellerOrders(sellerDetails.getSeller());
+        //return ResponseEntity.ok(ordersService.getSellerOrders(sellerDetails.getSeller()))
     }
 
 

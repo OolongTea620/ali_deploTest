@@ -1,8 +1,7 @@
 package com.example.ali.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,13 +16,11 @@ import com.example.ali.repository.UserRepository;
 import com.example.ali.repository.UserWalletRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,7 +75,8 @@ class UserServiceTest {
         when(userWalletRepository.save(any(UserWallet.class))).thenReturn(userWallet); // any : 어떤 인자가 호출 되더라도 동작
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        ResponseEntity<?> responseEntity = userService.signup(requestDto);
+//        ResponseEntity<?> responseEntity = userService.signup(requestDto);
+        MessageResponseDto messageResponseDto = userService.signup(requestDto);
 
         //then
 
@@ -88,8 +86,7 @@ class UserServiceTest {
         verify(userWalletRepository, times(1)).save(any(UserWallet.class));
         verify(userRepository, times(1)).save(any(User.class));
 
-        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertNotNull(responseEntity.getBody());
+        Assertions.assertNotNull(messageResponseDto);
 
     }
 
@@ -105,14 +102,12 @@ class UserServiceTest {
         user.setId(1L);
 
         // when
-        ResponseEntity<?> responseEntity = userService.getUserPoint(user);
+        UserWalletResponseDto userWalletResponseDto = userService.getUserPoint(user);
 
         //then
-//        verify(userRepository, times(1)).findById(user.getId());
-        UserWalletResponseDto responseDto = (UserWalletResponseDto) responseEntity.getBody();
-        assertThat(responseDto.getPoint()).isEqualTo(1000);
-        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertNotNull(responseEntity.getBody());
+        verify(userRepository, times(1)).findById(user.getId());
+        assertThat(userWalletResponseDto.getPoint()).isEqualTo(1000);
+
     }
 
     // custom 함수 따로 빼어 써도 된다. 어노테이션 불필요

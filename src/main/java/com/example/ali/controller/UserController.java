@@ -1,5 +1,6 @@
 package com.example.ali.controller;
 
+import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.UserSignupRequestDto;
 import com.example.ali.security.SellerDetailsImpl;
 import com.example.ali.security.UserDetailsImpl;
@@ -27,9 +28,13 @@ public class UserController {
 
     @Operation(summary = "user 회원가입")
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody UserSignupRequestDto requestDto){
-        return userService.signup(requestDto);
+    public ResponseEntity<MessageResponseDto> signup(@RequestBody UserSignupRequestDto requestDto){
+        return ResponseEntity.ok(userService.signup(requestDto));
     }
+
+
+
+
 
     @ResponseBody // form 을 통해 입력, 뷰 구현 필요
     @PostMapping("/email")

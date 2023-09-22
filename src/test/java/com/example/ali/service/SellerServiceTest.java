@@ -1,12 +1,12 @@
 package com.example.ali.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.example.ali.dto.MessageDataResponseDto;
+import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.SellerSignupRequestDto;
 import com.example.ali.dto.StoreRequestDto;
 import com.example.ali.dto.StoreResponseDto;
@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,11 +77,11 @@ class SellerServiceTest {
         when(sellerRepository.save(any(Seller.class))).thenReturn(seller);
 
         // 테스트 실행
-        ResponseEntity<?> responseEntity = sellerService.signup(requestDto);
+        MessageResponseDto messageResponseDto = sellerService.signup(requestDto);
+
 
         // then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertNotNull(responseEntity.getBody());
+        Assertions.assertNotNull(messageResponseDto.getMsg());
     }
 
     @Test
@@ -98,16 +96,15 @@ class SellerServiceTest {
         //when
         when(sellerRepository.findAll()).thenReturn(storeList);
 
-        ResponseEntity<?> responseEntity = sellerService.getStores();
+        List<StoreResponseDto> storeResponseDtos = sellerService.getStores();
 
         //then
-        List<StoreResponseDto> responseBody = (List<StoreResponseDto>) responseEntity.getBody();
 
-        assertEquals(2, responseBody.size()); // 2개의 셀러 정보가 있어야 함
-        assertEquals("Store1", responseBody.get(0).getStoreName());
-        assertEquals("Info1", responseBody.get(0).getInfo());
-        assertEquals("Store2", responseBody.get(1).getStoreName());
-        assertEquals("Info2", responseBody.get(1).getInfo());
+        assertEquals(2, storeResponseDtos.size()); // 2개의 셀러 정보가 있어야 함
+        assertEquals("Store1", storeResponseDtos.get(0).getStoreName());
+        assertEquals("Info1", storeResponseDtos.get(0).getInfo());
+        assertEquals("Store2", storeResponseDtos.get(1).getStoreName());
+        assertEquals("Info2", storeResponseDtos.get(1).getInfo());
     }
 
     @Test
@@ -127,13 +124,10 @@ class SellerServiceTest {
 
         // when
         when(sellerRepository.findById(1L)).thenReturn(Optional.of(seller));
-        ResponseEntity<?> responseEntity = sellerService.updateStore(requestDto);
+        MessageDataResponseDto messageDataResponseDto = sellerService.updateStore(requestDto);
 
         // then
-        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode()); // HTTP 상태 코드가 ACCEPTED 여야 함
-
-        MessageDataResponseDto responseBody = (MessageDataResponseDto) responseEntity.getBody();
-        StoreResponseDto updatedStore = (StoreResponseDto) responseBody.getData();
+        StoreResponseDto updatedStore = (StoreResponseDto) messageDataResponseDto.getData();
 
         assertEquals(seller.getStoreName(), "Store1 update");
         assertEquals("Store1 update", updatedStore.getStoreName());
@@ -152,9 +146,9 @@ class SellerServiceTest {
 
         // when
         doNothing().when(sellerRepository).delete(seller);
-        ResponseEntity<?> responseEntity = sellerService.deleteStore(seller);
+        MessageResponseDto messageResponseDto = sellerService.deleteStore(seller);
         // then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertNotNull(messageResponseDto.getMsg());
         // 반환 메세지 검증은 생략
     }
 

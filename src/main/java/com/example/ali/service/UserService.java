@@ -4,7 +4,6 @@ import com.example.ali.dto.MessageResponseDto;
 import com.example.ali.dto.UserSignupRequestDto;
 import com.example.ali.dto.UserWalletResponseDto;
 import com.example.ali.entity.Seller;
-import com.example.ali.entity.SellerWallet;
 import com.example.ali.entity.User;
 import com.example.ali.entity.UserWallet;
 import com.example.ali.repository.SellerRepository;
@@ -12,8 +11,6 @@ import com.example.ali.repository.UserRepository;
 import com.example.ali.repository.UserWalletRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +26,7 @@ public class UserService {
 
 
     @Transactional
-    public ResponseEntity<?> signup(UserSignupRequestDto requestDto) {
+    public MessageResponseDto signup(UserSignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
@@ -50,11 +47,11 @@ public class UserService {
         userRepository.save(user);
 
 
-        return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
+        return new MessageResponseDto("회원가입 성공");
     }
 
-    public ResponseEntity<?> getUserPoint(User user) {
+    public UserWalletResponseDto getUserPoint(User user) {
         UserWallet userWallet = user.getUserWallet();
-        return ResponseEntity.status(HttpStatus.OK).body(new UserWalletResponseDto(userWallet));
+        return new UserWalletResponseDto(userWallet);
     }
 }
