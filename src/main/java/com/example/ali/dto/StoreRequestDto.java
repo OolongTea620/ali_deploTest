@@ -15,4 +15,8 @@ public class StoreRequestDto {
         this.storeName = storeName;
         this.info = info;
     }
+
+    public StoreRequestDto() {
+
+    }
 }

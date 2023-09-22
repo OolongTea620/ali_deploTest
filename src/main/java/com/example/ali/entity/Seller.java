@@ -52,7 +52,6 @@ public class Seller {
     }
 
     //test
-<<<<<<< HEAD
     public Seller(String username) {
         this.username = username;
     }
@@ -70,20 +69,16 @@ public class Seller {
         this.password = password;
         this.storeName = storeName;
         this.info = info;
-=======
+    }
     public Seller(Long id, SellerSignupRequestDto requestDto, String password, SellerWallet sellerWallet) {
         this.id = id;
         this.username = requestDto.getUsername();
         this.password = password;
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();
->>>>>>> 33ecb3c2878e696c023c85ba34e76c56717211f9
         this.sellerWallet = sellerWallet;
         sellerWallet.setSeller(this);
     }
-
-<<<<<<< HEAD
-
 
     public Seller(String username, String password, String storeName, String info) {
         this.username = username;
@@ -92,8 +87,6 @@ public class Seller {
         this.info = info;
     }
 
-=======
->>>>>>> 33ecb3c2878e696c023c85ba34e76c56717211f9
     public void update(StoreRequestDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();
@@ -105,6 +98,3 @@ public class Seller {
         this.info = info;
     }
 }
-
-    public Seller(long l, SellerSignupRequestDto sellerSignupRequestDto, String number, SellerWallet sellerWallet) {
-    }

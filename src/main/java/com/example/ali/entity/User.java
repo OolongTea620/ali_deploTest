@@ -4,9 +4,11 @@ import com.example.ali.dto.UserSignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter // test
 @NoArgsConstructor
 public class User extends Timestamped{
     @Id
@@ -43,4 +45,12 @@ public class User extends Timestamped{
         userWallet.setUser(this);
     }
 
+
+    public User(String user, String number, String mail, UserWallet userWallet) {
+        this.username = user;
+        this.password = number;
+        this.email = mail;
+        this.userWallet = userWallet;
+        userWallet.setUser(this);
+    }
 }
