@@ -93,6 +93,14 @@ public class ProductService {
         return productList.stream().map(ProductResponseDto::new).toList();
     }
 
+    @Transactional
+    public List<ProductResponseDto> getSellerProducts(Seller seller) {
+
+        List<Product> productList = productRepository.findAllBySeller(seller);
+
+        return productList.stream().map(ProductResponseDto::new).toList();
+    }
+
 
     private Product findProductById(Long productId) {
         return productRepository.findById(productId)
@@ -113,4 +121,6 @@ public class ProductService {
         );
         return amazonS3Client.getUrl(S3Bucket, originName).toString();
     }
+
+
 }

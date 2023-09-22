@@ -1,77 +1,88 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Store Management</title>
-  <link rel="stylesheet" href="/css/styles.css">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-
+    <meta charset="UTF-8">
+    <title>Order List</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <div th:replace="header :: header"></div>
 
 <div style="display: flex;">
-  <!-- Aside Section -->
-  <div th:replace="aside :: aside"></div>
-
-  <div class="seller-management-content"
-       style="
-     height: 600px;
-     width: 800px;
-     "
-  >
-    <h1>Store Management</h1>
-
-    <input type="text" id="productName" placeholder="Product Name">
-    <input type="number" id="price" placeholder="Price">
-    <input type="number" id="stock" placeholder="Stock">
-    <input type="text" id="info" placeholder="Info">
-    <button onclick="createProduct()">Create Product</button>
-
-    <div id="listContainer"></div>
-
-  </div>
+    <!-- Aside Section -->
+    <div th:replace="aside :: aside"></div>
+    <div th:fragment="orders-list">
+        <div class="order-list" style="margin-left: 250px;">
+            <h1>주문 목록</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>주문 번호</th>
+                    <th>상품 이미지</th>
+                    <th>상품 이름</th>
+                    <th>수량</th>
+                    <th>가격</th>
+                    <th>상태</th>
+                </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                <!-- 데이터는 AJAX 요청을 통해 동적으로 채워집니다. -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="/js/storeManagement.js"></script>
-
 <script>
-  function createProduct() {
-    const productName = document.getElementById('productName').value;
-    const price = document.getElementById('price').value;
-    const stock = document.getElementById('stock').value;
-    const info = document.getElementById('info').value;
+    var Access_Token = localStorage.getItem("Access_Token");
+    var Refresh_Token = localStorage.getItem("Refresh_Token");
 
-    const requestDto = {
-      productName: productName,
-      price: parseInt(price),
-      stock: parseInt(stock),
-      info: info
+    // 페이지 로드 시 주문 목록 요청
+    window.onload = function () {
+      // Send a GET request to the API endpoint to fetch the seller's products
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "api/products/seller");
+      xhr.setRequestHeader("Access_Token", Access_Token);
+      xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          var response = JSON.parse(xhr.responseText);
+          displayProducts(response);  // Display products on success
+        } else {
+          // Handle error
+          console.error("Failed to fetch seller's products:", xhr.responseText);
+        }
+      };
+      xhr.send();
     };
 
-    const formData = new FormData();
-    formData.append('requestDto', JSON.stringify(requestDto));
+    // Function to display products in the HTML
+    function displayProducts(products) {
+      var tableBody = document.getElementById("ordersTableBody");
+      // Clear any existing content in the table body
+      tableBody.innerHTML = "";
 
-    fetch('/api/seller/product', {
-      method: 'POST',
-      headers: {
-        // Ensure the correct Content-Type header for FormData
-        'Content-Type': 'multipart/form-data'
-        // Add any other required headers here, e.g., authentication token
-      },
-      body: formData
-    })
-            .then(response => response.json())
-            .then(data => {
-              console.log('Product created:', data);
-              // Update the UI or display a success message as needed
-            })
-            .catch(error => console.error('Error creating product:', error));
-  }
+        products.forEach(function (product) {
+            var row = tableBody.insertRow();
+
+            // Add the product ID
+            row.insertCell(0).textContent = product.productId;
+
+            // Create an image element for the product image
+            var imgCell = row.insertCell(1);
+            var img = document.createElement("img");
+            img.src = product.imgUrl;  // Set the image source to the product's img URL
+            img.alt = "Product Image";  // Add alt text for accessibility
+            img.width = 100;  // 이미지 크기 조절 (원하는 크기로 변경 가능)
+            imgCell.appendChild(img);
+
+            // Add other cells based on your product structure (productName, price, etc.)
+            row.insertCell(2).textContent = product.productName;
+            row.insertCell(3).textContent = product.stock;
+            row.insertCell(4).textContent = product.info;
+            row.insertCell(5).textContent = product.productStatus;
+        });
+    }
 </script>
 </body>
 </html>
