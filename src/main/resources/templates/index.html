@@ -7,14 +7,14 @@
 </head>
 <body>
 <!-- Header Section -->
-<div th:replace="header :: header"></div>
+<div th:replace="~{header :: header}"></div>
 
 <div style="display: flex;">
   <!-- Aside Section -->
-  <div th:replace="aside :: aside"></div>
+  <div th:replace="~{aside :: aside}"></div>
 
   <!-- Main Content Section -->
-  <div style="flex-grow: 1; padding: 20px;" th:replace="productList :: product-list">
+  <div style="flex-grow: 1; padding: 20px;" th:replace="~{productList :: product-list}">
     <!-- ... (other content) -->
   </div>
 </div>
