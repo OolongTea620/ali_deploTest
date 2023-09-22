@@ -21,6 +21,7 @@ public class Orders extends Timestamped{
     private Long quantity;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @ManyToOne
@@ -32,6 +33,16 @@ public class Orders extends Timestamped{
     private Product product;
 
     public Orders(OrderRequestDto orderRequestDto, User user, Product product) {
+        this.totalPrice = product.getPrice() * orderRequestDto.getQnt();
+        this.quantity = orderRequestDto.getQnt();
+        this.orderStatus = OrderStatus.DELIVERING;
+        this.user = user;
+        this.product = product;
+    }
+
+    //test
+    public Orders(Long id, OrderRequestDto orderRequestDto, User user, Product product) {
+        this.id = id;
         this.totalPrice = product.getPrice() * orderRequestDto.getQnt();
         this.quantity = orderRequestDto.getQnt();
         this.orderStatus = OrderStatus.DELIVERING;
