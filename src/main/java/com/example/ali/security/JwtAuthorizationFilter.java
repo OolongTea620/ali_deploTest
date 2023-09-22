@@ -37,6 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String userType = jwtUtil.getUserTypeFromToken(accessToken); // 사용자 유형 정보 추출
 
         if(accessToken == null){ //엑세스 토큰이 아예 없다.
+            filterChain.doFilter(req, res);
             return; // filterChain.doFilter(req, res)로 넘기지 않고 해당 구문을 탈출하기 위함
         }
 

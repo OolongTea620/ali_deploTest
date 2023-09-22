@@ -95,7 +95,7 @@ public class JwtUtil {
             return claims.get("userType", String.class);
         } catch (Exception e) {
             log.error(e.getMessage() + "getUserTypeFromToken");
-            throw new NullPointerException("타입이 없습니다.");
+            return "guest";
         }
     }
 

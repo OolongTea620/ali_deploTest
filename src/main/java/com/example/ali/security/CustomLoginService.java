@@ -19,26 +19,16 @@ public class CustomLoginService implements UserDetailsService {
     private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
 
-//    private final UserDetailsServiceImpl userDetailsService;
-//    private final SellerDetailsServiceImpl sellerDetailsService;
-//
-//    public CustomLoginService(UserDetailsServiceImpl userDetailsService, SellerDetailsServiceImpl sellerDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//        this.sellerDetailsService = sellerDetailsService;
-//    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         Optional<User> user = userRepository.findByUsername(username);
-        if(user.isPresent())
-            return user.map(UserDetailsImpl::new).orElseThrow(()
-                -> new IllegalArgumentException("잘못된 인증 객체"));
-        else {
-            Seller seller = sellerRepository.findByUsername(username).orElseThrow(()
-            -> new IllegalArgumentException("잘못된 인증 객체"));
+        if(user.isPresent()) {
+            return user.map(UserDetailsImpl::new).orElseThrow(() ->
+                    new UsernameNotFoundException("해당 유저를 찾을 수 없습니다 : " + username));
+        } else {
+            Seller seller = sellerRepository.findByUsername(username).orElseThrow(() ->
+                    new UsernameNotFoundException("해당 셀러를 찾을 수 없습니다 : " + username));
             return new SellerDetailsImpl(seller);
-
         }
     }
 }
