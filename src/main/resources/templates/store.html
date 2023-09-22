@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
   <meta charset="UTF-8">
-  <title>Store Management</title>
+  <title>Product List</title>
   <link rel="stylesheet" href="/css/styles.css">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-
 </head>
 <body>
 <div th:replace="header :: header"></div>
@@ -23,6 +19,28 @@
      "
 >
   <h1>Store Management</h1>
+
+
+  <!-- 인증되지 않은(로그인하지 않은) 사용자에게 보임 -->
+  <!-- 인증된(로그인한) 사용자에게 보임 -->
+
+  <!-- ROLE_ADMIN 권한을 가지고 있다면 보임 -->
+  <!-- ROLE_SUB_ADMIN 권한을 가지고 있다면 보임 -->
+  <!-- ROLE_USER 권한을 가지고 있다면 보임 -->
+  <!-- ROLE_ADMIN 혹은 ROLE_SUB_ADMIN 권한을 가지고 있다면 보임 -->
+
+  <br/>
+  <!--인증시 사용된 객체에 대한 정보-->
+  <b>Authenticated DTO:</b>
+
+  <br/>
+  <!--인증시 사용된 객체의 Username (ID)-->
+  <b>Authenticated username:</b>
+
+  <br/>
+  <!--객체의 권한-->
+  <b>Authenticated admin role:</b>
+
 
   <form id="storeForm">
     <div class="form-group">
@@ -58,7 +76,29 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="/js/storeManagement.js"></script>
 </body>
-<script>
+<script src="/js/basic.js">
+  window.onload = function() {
+    // 1. 로컬 스토리지에서 JWT 토큰을 가져옵니다.
+    const token = localStorage.getItem('Access_Token');
+    console.log(token);
+
+    // 2. JWT 토큰을 디코드하여 userType을 확인합니다.
+    const decodedToken = atob(token.split('.')[1]);
+    const payload = JSON.parse(decodedToken);
+
+    // 3. userType이 "SELLER"인 경우에만 특정 메뉴를 보여줍니다.
+    if (payload.userType !== 'SELLER') {
+      document.getElementById('productManagement').style.display = 'none'; // 상품 관리 메뉴 숨기기
+      document.getElementById('storeManagement').style.display = 'none';   // 매장 관리 메뉴 숨기기
+    }
+  }
+
+
+
+
+
+
+
   function createStore() {
     var storeData = {
       storeName: $('#storeName').val(),

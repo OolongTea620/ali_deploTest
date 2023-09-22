@@ -31,6 +31,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+        // 헤더에서 토큰 추출
 
         String accessToken = jwtUtil.getHeaderToken(req, ACCESS);
 //        String refreshToken = jwtUtil.getHeaderToken(req, "Refresh"); //만료되면 그때가지고 들어오기
@@ -38,7 +39,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if(accessToken == null){ //엑세스 토큰이 아예 없다.
             filterChain.doFilter(req, res);
-            return; // filterChain.doFilter(req, res)로 넘기지 않고 해당 구문을 탈출하기 위함
+            return;
         }
 
         if(!jwtUtil.validateToken(accessToken)){
@@ -60,6 +61,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 // 리프레시 토큰이 만료 || 리프레시 토큰이 DB와 비교했을때 똑같지 않다면
             }
         }
+        else {
+            setAuthentication(jwtUtil.getUserNameFromToken(accessToken), userType);
+        }
+
+
         filterChain.doFilter(req, res);
     }
 
@@ -75,6 +81,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     // 인증 객체 생성
     private Authentication createAuthentication(String username, String usertype) {
         UserDetails userDetails = customLoginService.loadUserByUsername(username);
+        System.out.println(userDetails.getAuthorities());
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
