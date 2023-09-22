@@ -18,6 +18,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 //authfilter,loggingfilter 대신 편리하게 사용
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    public static final String ACCESS = "Access";
+    public static final String REFRESH = "Refresh";
+
+
     private final JwtUtil jwtUtil;
     private final CustomLoginService customLoginService;
     public JwtAuthorizationFilter(JwtUtil jwtUtil, CustomLoginService customLoginServic) {
@@ -28,39 +32,33 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = jwtUtil.getHeaderToken(req, "Access");
-        String refreshToken = jwtUtil.getHeaderToken(req, "Refresh");
+        String accessToken = jwtUtil.getHeaderToken(req, ACCESS);
+//        String refreshToken = jwtUtil.getHeaderToken(req, "Refresh"); //만료되면 그때가지고 들어오기
         String userType = jwtUtil.getUserTypeFromToken(accessToken); // 사용자 유형 정보 추출
 
-        if (accessToken != null) {
-            // 어세스 토큰값이 유효하다면 setAuthentication를 통해
-            // security context에 인증 정보저장
-            if (jwtUtil.validateToken(accessToken)) {
-                setAuthentication(jwtUtil.getUserNameFromToken(accessToken), userType);
-            }
-            // 어세스 토큰이 만료된 상황 && 리프레시 토큰 또한 존재하는 상황
-            else if (refreshToken != null) {
-                // 리프레시 토큰 검증 && 리프레시 토큰 DB에서  토큰 존재유무 확인
-                boolean isRefreshToken = jwtUtil.refreshTokenValidation(refreshToken);
-                // 리프레시 토큰이 유효하고 리프레시 토큰이 DB와 비교했을때 똑같다면
-                if (isRefreshToken) {
-                    // 리프레시 토큰으로 아이디 정보 가져오기
-                    String username = jwtUtil.getUserNameFromToken(refreshToken);
-                    userType = jwtUtil.getUserTypeFromToken(refreshToken); // 리프레시 토큰에서 사용자 유형 정보 추출
-                    // 새로운 어세스 토큰 발급
-                    String newAccessToken = jwtUtil.createToken(username, userType, "Access");
-                    // 헤더에 어세스 토큰 추가
-                    jwtUtil.setHeaderAccessToken(res, newAccessToken);
-                    // Security context에 인증 정보 넣기
-                    setAuthentication(jwtUtil.getUserNameFromToken(newAccessToken), userType);
-                }
-                // 리프레시 토큰이 만료 || 리프레시 토큰이 DB와 비교했을때 똑같지 않다면
-                else {
-                    throw new NullPointerException("Refresh Token 만료");
-                }
-            }
+        if(accessToken == null){ //엑세스 토큰이 아예 없다.
+            return; // filterChain.doFilter(req, res)로 넘기지 않고 해당 구문을 탈출하기 위함
         }
 
+        if(!jwtUtil.validateToken(accessToken)){
+            String refreshToken = jwtUtil.getHeaderToken(req, REFRESH);
+            boolean isRefreshToken = jwtUtil.refreshTokenValidation(refreshToken);
+
+            if (!isRefreshToken) {
+                throw new NullPointerException("Refresh Token 만료");
+            }else {
+                // 리프레시 토큰으로 아이디 정보 가져오기
+                String username = jwtUtil.getUserNameFromToken(refreshToken);
+                userType = jwtUtil.getUserTypeFromToken(refreshToken); // 리프레시 토큰에서 사용자 유형 정보 추출
+                // 새로운 어세스 토큰 발급
+                String newAccessToken = jwtUtil.createToken(username, userType, ACCESS);
+                // 헤더에 어세스 토큰 추가
+                jwtUtil.setHeaderAccessToken(res, newAccessToken);
+                // Security context에 인증 정보 넣기
+                setAuthentication(jwtUtil.getUserNameFromToken(newAccessToken), userType);
+                // 리프레시 토큰이 만료 || 리프레시 토큰이 DB와 비교했을때 똑같지 않다면
+            }
+        }
         filterChain.doFilter(req, res);
     }
 
@@ -74,7 +72,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     // 인증 객체 생성
-    private Authentication createAuthentication(String username, String userType) {
+    private Authentication createAuthentication(String username, String usertype) {
         UserDetails userDetails = customLoginService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }

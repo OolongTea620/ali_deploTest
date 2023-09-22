@@ -39,9 +39,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    private SellerDetailsServiceImpl sellerDetailsService;
+    private CustomLoginService customLoginService;
+//    private UserDetailsServiceImpl userDetailsService;
+//    @Autowired
+//    private SellerDetailsServiceImpl sellerDetailsService;
 
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
@@ -71,7 +72,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 //             userType 검증
             if ("SELLER".equals(userType)) {
-                UserDetails sellerDetails = sellerDetailsService.loadUserByUsername(requestDto.getUsername());
+                UserDetails sellerDetails = customLoginService.loadUserByUsername(requestDto.getUsername());
                 return getAuthenticationManager().authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 requestDto.getUsername(),
@@ -80,8 +81,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                         )
                 );
             } else {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getUsername());
-//                log.info("userDetails.getUsername()={}",userDetails.getUsername());
+                UserDetails userDetails = customLoginService.loadUserByUsername(requestDto.getUsername());
                 return getAuthenticationManager().authenticate( // AuthenticationManager로 인증 시도 후 성공하면 Authentication 객체 리턴
                         new UsernamePasswordAuthenticationToken( // UsernamePasswordAuthenticationToken 객체를 Authentication 객체로 인증 시도
                                 requestDto.getUsername(), // principal

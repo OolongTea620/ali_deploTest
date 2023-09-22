@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class SellerDetailsImpl implements UserDetails {
 
     private final Seller seller;
-    private static final String AUTHORITY = "seller";
+    private static final String AUTHORITY = "SELLER";
 
     public SellerDetailsImpl(Seller seller) {
         this.seller = seller;
