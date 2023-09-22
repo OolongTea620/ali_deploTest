@@ -33,6 +33,52 @@
     </div>
 </div>
 
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <h2>Edit Product</h2>
+        <form id="editForm">
+            <input type="hidden" id="editProductId" value="">
+            <label for="editProductName">Product Name:</label>
+            <input type="text" id="editProductName" required><br>
+            <label for="editStock">Stock:</label>
+            <input type="number" id="editStock" required><br>
+            <label for="editInfo">Info:</label>
+            <input type="text" id="editInfo" required><br>
+            <label for="editPrice">Price:</label>
+            <input type="number" id="editPrice" required><br>
+            <label for="editProductStatus">Product Status:</label>
+            <input type="text" id="editProductStatus" required><br>
+            <button type="submit" onclick="updateProduct(event)">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- New Product Modal -->
+<div id="newProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeNewProductModal()">×</span>
+        <h2>Create New Product</h2>
+        <form id="newProductForm" enctype="multipart/form-data">
+            <!-- Add fields for new product details -->
+            <label for="newProductName">Product Name:</label>
+            <input type="text" id="newProductName" required><br>
+            <label for="newStock">Stock:</label>
+            <input type="number" id="newStock" required><br>
+            <label for="newInfo">Info:</label>
+            <input type="text" id="newInfo" required><br>
+            <label for="newPrice">Price:</label>
+            <input type="number" id="newPrice" required><br>
+            <label for="newProductStatus">Product Status:</label>
+            <input type="text" id="newProductStatus" required><br>
+            <label for="image">Image:</label>
+            <input type="file" id="image" accept="image/*" required><br> <!-- Accepts only image files -->
+            <button type="submit" onclick="createProduct(event)">Create Product</button>
+        </form>
+    </div>
+</div>
+
+
 <script>
     var Access_Token = localStorage.getItem("Access_Token");
     var Refresh_Token = localStorage.getItem("Refresh_Token");
@@ -79,10 +125,170 @@
             // Add other cells based on your product structure (productName, price, etc.)
             row.insertCell(2).textContent = product.productName;
             row.insertCell(3).textContent = product.stock;
-            row.insertCell(4).textContent = product.info;
-            row.insertCell(5).textContent = product.productStatus;
+            row.insertCell(4).textContent = product.price;
+            row.insertCell(5).textContent = product.info;
+            row.insertCell(6).textContent = product.productStatus;
+
+            var editCell = row.insertCell(7);
+            var editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.addEventListener("click", function () {
+                openEditModal(product.productId, product.productName, product.stock, product.info, product.productStatus, product.price);
+            });
+            editCell.appendChild(editButton);
+
+            var deleteCell = row.insertCell(7);
+            var deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", function () {
+                // Call a function to handle deletion
+                deleteProduct(product.productId);
+            });
+            deleteCell.appendChild(deleteButton);
         });
     }
+
+
+    function openEditModal(productId, productName, stock, info, productStatus, price) {
+        document.getElementById("editProductId").value = productId;
+        document.getElementById("editProductName").value = productName;
+        document.getElementById("editStock").value = stock;
+        document.getElementById("editInfo").value = info;
+        document.getElementById("editProductStatus").value = productStatus;
+        document.getElementById("editPrice").value = price; // Set the price input value
+
+        // Show the modal
+        var editModal = document.getElementById("editModal");
+        editModal.style.display = "block";
+    }
+
+    // Function to close the edit modal
+    function closeEditModal() {
+        var editModal = document.getElementById("editModal");
+        editModal.style.display = "none";
+    }
+
+    // Function to update product details
+    function updateProduct(event) {
+        event.preventDefault();  // Prevent the default form submission behavior
+
+        var productId = document.getElementById("editProductId").value;
+        var productName = document.getElementById("editProductName").value;
+        var stock = document.getElementById("editStock").value;
+        var info = document.getElementById("editInfo").value;
+        var productStatus = document.getElementById("editProductStatus").value;
+        var price = document.getElementById("editPrice").value;  // Added line to get price
+
+        var updatedProduct = {
+            productId: productId,
+            productName: productName,
+            stock: stock,
+            info: info,
+            productStatus: productStatus,
+            price: price  // Include price in the updated product object
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", "/api/seller/product/" + productId);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 202) {
+                // Product updated successfully, you can handle further actions here
+                console.log("Product updated successfully:", xhr.responseText);
+                // Close the modal after updating
+                closeEditModal();
+                // Reload the product list or update the displayed product details as needed
+                // ...
+            } else {
+                // Handle error
+                console.error("Failed to update product:", xhr.responseText);
+            }
+        };
+        xhr.send(JSON.stringify(updatedProduct));
+    }
+
+    // Function to delete a product
+    function deleteProduct(productId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/api/seller/product/" + productId);
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Product deleted successfully, you can handle further actions here
+                console.log("Product deleted successfully:", xhr.responseText);
+                // Reload the product list or update the displayed product details as needed
+                // ...
+                // Reload the product list after deletion
+                window.location.reload();
+            } else {
+                // Handle error
+                console.error("Failed to delete product:", xhr.responseText);
+            }
+        };
+        xhr.send();
+    }
+
+    function openNewProductModal() {
+        var newProductModal = document.getElementById("newProductModal");
+        newProductModal.style.display = "block";
+    }
+
+    function closeNewProductModal() {
+        var newProductModal = document.getElementById("newProductModal");
+        newProductModal.style.display = "none";
+    }
+
+    function createProduct() {
+        var productName = document.getElementById("newProductName").value;
+        var stock = document.getElementById("newStock").value;
+        var info = document.getElementById("newInfo").value;
+        var productStatus = document.getElementById("newProductStatus").value;
+        var price = document.getElementById("newPrice").value;
+
+        var imageFile = document.getElementById("image").files[0];
+
+        var formData = new FormData();
+        formData.append("image", imageFile);
+
+        // Convert the JSON data to a string and append it as a part
+        var jsonData = JSON.stringify({
+            productName: productName,
+            stock: stock,
+            info: info,
+            productStatus: productStatus,
+            price: price
+        });
+        formData.append('requestDto', new Blob([jsonData], {
+            type: 'application/json'
+        }));
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/seller/product");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 201) {
+                // Product created successfully
+                console.log("Product created successfully:", xhr.responseText);
+            } else {
+                // Handle error
+                console.error("Failed to create product:", xhr.responseText);
+            }
+        };
+        xhr.send(formData);
+    }
+</script>
+
+<!-- Add New Product button at the bottom -->
+<div style="margin-top: 20px; text-align: center;">
+    <button onclick="openNewProductModal()">Add New Product</button>
+</div>
+</body>
+</html>
+
 </script>
 </body>
 </html>
