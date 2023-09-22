@@ -41,7 +41,7 @@ public class ProductService {
     private String S3Bucket;
 
     @Transactional
-    public ResponseEntity<?> createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException{
+    public MessageDataResponseDto createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException {
 
 
         String imageUrl = getImage(image);
@@ -51,9 +51,46 @@ public class ProductService {
 
         Product newProduct = productRepository.save(product);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
+        return new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct));
+    }
+
+
+    @Transactional
+    public MessageDataResponseDto updateProduct(Long productId, ProductRequestDto requestDto) {
+        Product product = findProductById(productId);
+        product.update(requestDto);
+
+        return new MessageDataResponseDto("상품 수정 성공", new ProductResponseDto(product));
+    }
+
+    @Transactional
+    public MessageDataResponseDto deleteProduct(Long productId) {
+        Product product = findProductById(productId);
+        productRepository.delete(product);
+        return new MessageDataResponseDto("상품 삭제 성공", new ProductResponseDto(product));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getSearchProduct(String keyword) {
+
+        List<Product> productList = new ArrayList<>();
+
+        productList = productRepository.findAllByProductNameLike(keyword);
+        return productList.stream().map(ProductResponseDto::new).toList();
+    }
+
+    @Transactional
+    public List<ProductResponseDto> getProducts() {
+
+        List<Product> productList = productRepository.findAll();
+
+        return productList.stream().map(ProductResponseDto::new).toList();
+    }
+
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("product 찾을 수 없음"));
     }
 
     private String getImage(MultipartFile image) throws IOException {
@@ -65,55 +102,9 @@ public class ProductService {
         objectMetadata.setContentLength(size);
 
         amazonS3Client.putObject(
-                new PutObjectRequest(S3Bucket, originName, image.getInputStream(), objectMetadata )
+                new PutObjectRequest(S3Bucket, originName, image.getInputStream(), objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead)
         );
         return amazonS3Client.getUrl(S3Bucket, originName).toString();
     }
-
-    @Transactional
-    public ResponseEntity<?> updateProduct(Long productId, ProductRequestDto requestDto) {
-        Product product = findProductById(productId);
-        product.update(requestDto);
-
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(new MessageDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
-    }
-
-    @Transactional
-    public ResponseEntity<?> deleteProduct(Long productId) {
-        Product product = findProductById(productId);
-        productRepository.delete(product);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new MessageDataResponseDto("상품 삭제 성공", new ProductResponseDto(product)));
-    }
-
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchProduct(String keyword) {
-
-        List<Product> productList = new ArrayList<>();
-
-        productList = productRepository.findAllByProductNameLike(keyword);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(productList.stream().map(ProductResponseDto::new).toList());
-    }
-
-    public ResponseEntity<?> getProducts(){
-
-        List<Product> productList = productRepository.findAll();
-
-            return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(productList.stream().map(ProductResponseDto::new).toList());
-    }
-
-
-    private Product findProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("product 찾을 수 없음"));
-    }
-
 }

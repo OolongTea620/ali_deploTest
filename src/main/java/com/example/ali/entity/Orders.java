@@ -40,6 +40,16 @@ public class Orders extends Timestamped{
         this.product = product;
     }
 
+    //test
+    public Orders(Long id, OrderRequestDto orderRequestDto, User user, Product product) {
+        this.id = id;
+        this.totalPrice = product.getPrice() * orderRequestDto.getQnt();
+        this.quantity = orderRequestDto.getQnt();
+        this.orderStatus = OrderStatus.DELIVERING;
+        this.user = user;
+        this.product = product;
+    }
+
     public void changeDeliveryStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }

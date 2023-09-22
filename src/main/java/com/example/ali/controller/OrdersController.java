@@ -1,5 +1,6 @@
 package com.example.ali.controller;
 
+import com.example.ali.dto.MessageDataResponseDto;
 import com.example.ali.dto.OrderRequestDto;
 import com.example.ali.dto.OrderStatusRequestDto;
 import com.example.ali.dto.OrdersResponseDto;
@@ -23,31 +24,31 @@ public class OrdersController {
     // 주문 확인 조회
     @Operation(summary = "주문 확인 조회")
     @GetMapping("/seller/orders")
-    public List<OrdersResponseDto> getSellerOrders(@AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
-        return ordersService.getSellerOrders(sellerDetails.getSeller());
-        //return ResponseEntity.ok(ordersService.getSellerOrders(sellerDetails.getSeller()))
+    public ResponseEntity<MessageDataResponseDto> getSellerOrders(@AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
+        return ResponseEntity.status(200).body(ordersService.getSellerOrders(sellerDetails.getSeller()));
     }
 
 
     // 배송 상태 변경
     @Operation(summary = "배송 상태 변경")
     @PostMapping("/seller/orders/{ordersId}")
-    public ResponseEntity<?> changeDeliveryStatus(@PathVariable Long ordersId, @RequestBody OrderStatusRequestDto orderStatusRequestDto, @AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
-        return ordersService.changeDeliveryStatus(ordersId, orderStatusRequestDto, sellerDetails.getSeller());
+    public ResponseEntity<MessageDataResponseDto> changeDeliveryStatus(@PathVariable Long ordersId, @RequestBody OrderStatusRequestDto orderStatusRequestDto, @AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
+        return ResponseEntity.status(200).body(ordersService.changeDeliveryStatus(ordersId, orderStatusRequestDto, sellerDetails.getSeller()));
+
     }
 
     // 상품 주문
     @Operation(summary = "상품 주문")
     @PostMapping("/product/order")
-    public ResponseEntity<?> orderProduct(@RequestBody OrderRequestDto orderRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ordersService.orderProduct(orderRequestDto, userDetails.getUser());
+    public ResponseEntity<MessageDataResponseDto> orderProduct(@RequestBody OrderRequestDto orderRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.status(200).body(ordersService.orderProduct(orderRequestDto, userDetails.getUser()));
     }
 
     // 주문 조회 (유저 본인의 주문 내역 조회)
     @Operation(summary = "주문 조회 (유저 본인의 주문 내역 조회)")
-    @GetMapping("user/orders")
-    public List<OrdersResponseDto> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ordersService.getUserOrders(userDetails.getUser());
+    @GetMapping("/user/orders")
+    public ResponseEntity<MessageDataResponseDto> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.status(200).body(ordersService.getUserOrders(userDetails.getUser()));
     }
 
 }
