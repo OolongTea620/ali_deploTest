@@ -22,10 +22,13 @@
      width: 800px;
      "
   >
-    <!-- Removed the h1 tag for "Store Management" -->
+    <h1>Store Management</h1>
 
-    <button onclick="showList1()">Show List 1</button>
-    <button onclick="showList2()">Show List 2</button>
+    <input type="text" id="productName" placeholder="Product Name">
+    <input type="number" id="price" placeholder="Price">
+    <input type="number" id="stock" placeholder="Stock">
+    <input type="text" id="info" placeholder="Info">
+    <button onclick="createProduct()">Create Product</button>
 
     <div id="listContainer"></div>
 
@@ -36,14 +39,37 @@
 <script src="/js/storeManagement.js"></script>
 
 <script>
-  function showList1() {
-    const listContainer = document.getElementById('listContainer');
-    listContainer.innerHTML = '<h2>List 1</h2><ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>';
-  }
+  function createProduct() {
+    const productName = document.getElementById('productName').value;
+    const price = document.getElementById('price').value;
+    const stock = document.getElementById('stock').value;
+    const info = document.getElementById('info').value;
 
-  function showList2() {
-    const listContainer = document.getElementById('listContainer');
-    listContainer.innerHTML = '<h2>List 2</h2><ul><li>Item A</li><li>Item B</li><li>Item C</li></ul>';
+    const requestDto = {
+      productName: productName,
+      price: parseInt(price),
+      stock: parseInt(stock),
+      info: info
+    };
+
+    const formData = new FormData();
+    formData.append('requestDto', JSON.stringify(requestDto));
+
+    fetch('/api/seller/product', {
+      method: 'POST',
+      headers: {
+        // Ensure the correct Content-Type header for FormData
+        'Content-Type': 'multipart/form-data'
+        // Add any other required headers here, e.g., authentication token
+      },
+      body: formData
+    })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Product created:', data);
+              // Update the UI or display a success message as needed
+            })
+            .catch(error => console.error('Error creating product:', error));
   }
 </script>
 </body>
