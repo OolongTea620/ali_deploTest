@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Order List</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+<div th:replace="header :: header"></div>
+
+<div style="display: flex;">
+    <!-- Aside Section -->
+    <div th:replace="aside :: aside"></div>
+    <div th:fragment="orders-list">
+        <div class="order-list" style="margin-left: 250px;">
+            <h1>Order list</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>orderid</th>
+                    <th>Order Quantity</th>
+                    <th>Total price</th>
+                    <th>Product name</th>
+                    <th>Status</th>
+                    <th>Product Photo</th>
+                    <th>Order Date</th>
+                    <th>Seller</th>
+                    <th>Buyer</th>
+                </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                <!-- Data is populated dynamically via AJAX requests. -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel">Update Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="statusForm">
+                    <div class="form-group">
+                        <label><input type="radio" name="status" value="DELIVERING"> DELIVERING</label>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="radio" name="status" value="DELIVERED"> DELIVERED</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateStatus()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    var Access_Token = localStorage.getItem("Access_Token");
+    var Refresh_Token = localStorage.getItem("Refresh_Token");
+
+    // Order ID variable to store the current order being updated
+    var currentOrderId;
+
+    // Function to set the order ID and open the modal
+    function openStatusModal(orderId) {
+        currentOrderId = orderId;
+        $('#statusModal').modal('show');
+    }
+
+    function closeStatusModal() {
+        $('#statusModal').modal('hide');
+    }
+
+    // Request order list when page loads
+    window.onload = function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "api/seller/orders");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                var ordersList = response.data;
+                var tableBody = document.getElementById("ordersTableBody");
+                ordersList.forEach(function (order) {
+                    var row = tableBody.insertRow();
+                    row.insertCell(0).textContent = order.id;
+                    row.insertCell(1).textContent = order.qnt;
+                    row.insertCell(2).textContent = order.totalPrice;
+                    row.insertCell(3).textContent = order.productName;
+                    row.insertCell(4).textContent = order.status;
+
+                    var imgCell = row.insertCell(5);
+                    var img = document.createElement("img");
+                    img.src = order.productImg;
+                    img.alt = "Product Image";
+                    img.width = 100; // Adjust image size (can be changed to desired size)
+                    imgCell.appendChild(img);
+
+                    row.insertCell(6).textContent = order.createdAt;
+                    row.insertCell(7).textContent = order.sellerName;
+                    row.insertCell(8).textContent = order.username;
+                    var statusCell = row.insertCell(9);
+                    var button = document.createElement("button");
+                    button.textContent = "Update Status";
+                    button.addEventListener("click", function () {
+                        openStatusModal(order.id);
+                    });
+                    statusCell.appendChild(button);
+                });
+            } else {
+                // error handling
+                console.error("Failed to fetch orders:", xhr.responseText);
+            }
+        };
+        xhr.send();
+    };
+
+    function updateStatus() {
+        var form = document.getElementById("statusForm");
+        var newStatus = form.querySelector('input[name="status"]:checked').value;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", `/api/seller/orders/${currentOrderId}`);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Update the status in the table
+                var statusCell = document.getElementById(`statusCell_${currentOrderId}`);
+                statusCell.textContent = newStatus;
+                console.log("Status updated successfully.");
+
+                // Reload the page only when changing to DELIVERED
+                if (newStatus === "DELIVERED") {
+                    window.location.reload();
+                }
+            } else {
+                console.error("Failed to update status:", xhr.responseText);
+            }
+            // Close the modal regardless of the update result
+            closeStatusModal();
+            // Reset the form within the modal
+            form.reset();
+        };
+        xhr.send(JSON.stringify({"status": newStatus}));
+    }
+</script>
+</body>
+
+</html>

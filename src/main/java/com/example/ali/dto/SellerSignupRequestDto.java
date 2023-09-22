@@ -1,8 +1,11 @@
 package com.example.ali.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+
 public class SellerSignupRequestDto {
     private String username;
     private String password;

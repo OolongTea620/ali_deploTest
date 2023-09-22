@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order List</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div th:replace="header :: header"></div>
+
+<div style="display: flex;">
+    <!-- Aside Section -->
+    <div th:replace="aside :: aside"></div>
+    <div th:fragment="orders-list">
+        <div class="order-list" style="margin-left: 250px;">
+            <h1>주문 목록</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>상점 id</th>
+                    <th>상점 이름</th>
+                    <th>상점 정보</th>
+                </tr>
+                </thead>
+                <tbody id="storesTableBody">
+                <!-- 데이터는 AJAX 요청을 통해 동적으로 채워집니다. -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Access_Token = localStorage.getItem("Access_Token");
+    var Refresh_Token = localStorage.getItem("Refresh_Token");
+
+    // 페이지 로드 시 주문 목록 요청
+    window.onload = function () {
+        // Send a GET request to the API endpoint to fetch the seller's products
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "api/seller/store");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                displayProducts(response);  // Display products on success
+            } else {
+                // Handle error
+                console.error("Failed to fetch seller's products:", xhr.responseText);
+            }
+        };
+        xhr.send();
+    };
+
+    // Function to display products in the HTML
+    function displayProducts(stores) {
+        var tableBody = document.getElementById("storesTableBody");
+        // Clear any existing content in the table body
+        tableBody.innerHTML = "";
+
+        stores.forEach(function (store) {
+            var row = tableBody.insertRow();
+
+            // Add the product ID
+            row.insertCell(0).textContent = store.sellerId;
+            row.insertCell(1).textContent = store.storeName;
+            row.insertCell(2).textContent = store.info;
+
+        });
+    }
+
+</script>
