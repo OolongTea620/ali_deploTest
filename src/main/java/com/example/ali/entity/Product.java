@@ -74,7 +74,6 @@ public class Product {
         this.info = requestDto.getInfo();
         this.productStatus = requestDto.getProductStatus();
         this.productStock.update(requestDto.getStock());
-
     }
 
 }
