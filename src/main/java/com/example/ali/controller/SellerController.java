@@ -54,4 +54,10 @@ public class SellerController {
         return ResponseEntity.ok(sellerService.deleteStore(sellerDetails.getSeller()));
     }
 
+    // (뷰) 회원가입 페이지 이동
+    @GetMapping("/auth/seller/signup-page")
+    public String signupPage() {
+        return "sellerSignup";
+    }
+
 }
