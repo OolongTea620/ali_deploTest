@@ -87,6 +87,7 @@ public class JwtUtil {
 
 
     public String getUserTypeFromToken(String token) {
+
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(secretKey)
@@ -95,7 +96,7 @@ public class JwtUtil {
             return claims.get("userType", String.class);
         } catch (Exception e) {
             log.error(e.getMessage() + "getUserTypeFromToken");
-            throw new NullPointerException("타입이 없습니다.");
+            return "GUEST";
         }
     }
 

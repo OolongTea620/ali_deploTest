@@ -33,10 +33,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
         String accessToken = jwtUtil.getHeaderToken(req, ACCESS);
-//        String refreshToken = jwtUtil.getHeaderToken(req, "Refresh"); //만료되면 그때가지고 들어오기
         String userType = jwtUtil.getUserTypeFromToken(accessToken); // 사용자 유형 정보 추출
 
         if(accessToken == null){ //엑세스 토큰이 아예 없다.
+            filterChain.doFilter(req, res);
             return; // filterChain.doFilter(req, res)로 넘기지 않고 해당 구문을 탈출하기 위함
         }
 

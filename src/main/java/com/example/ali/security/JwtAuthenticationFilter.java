@@ -64,7 +64,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // 요청 본문이 비어 있는지 확인
             if (request.getContentLength() == 0) {
-                throw new RuntimeException("요청 본문이 비어 있습니다.");
+                return null;
+//                throw new RuntimeException("요청 본문이 비어 있습니다.");
             }
             LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
 
