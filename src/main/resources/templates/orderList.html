@@ -4,33 +4,78 @@
   <meta charset="UTF-8">
   <title>Order List</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    /* 주문 목록 테이블 스타일 */
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+      margin-top: 20px;
+      text-align: center; /* 가운데 정렬 추가 */
+    }
+
+    .order-table th, .order-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center; /* 가운데 정렬 추가 */
+    }
+
+    .order-table th {
+      background-color: #f2f2f2;
+    }
+
+    .order-table tbody tr:nth-child(odd) {
+      background-color: #f2f2f2;
+    }
+
+    .order-table tbody tr:hover {
+      background-color: #ddd;
+    }
+
+    .order-table img {
+      max-width: 50px;
+      height: auto;
+    }
+
+    /* 주문 목록 컨테이너 스타일 */
+    .order-list-container {
+      display: flex;
+      align-items: center;
+    }
+
+    /* 가운데 정렬 스타일 추가 */
+    .order-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 <div th:replace="header :: header"></div>
 
-<div style="display: flex;">
-  <!-- Aside Section -->
+<div class="order-list-container">
   <div th:replace="aside :: aside"></div>
-  <div th:fragment="orders-list">
-    <div class="order-list">
-      <h1>주문 목록</h1>
-      <table>
-        <thead>
-        <tr>
-          <th>주문 번호</th>
-          <th>상품 이미지</th>
-          <th>상품 이름</th>
-          <th>수량</th>
-          <th>가격</th>
-          <th>상태</th>
-          <th>주문 일자</th>
-        </tr>
-        </thead>
-        <tbody id="ordersTableBody">
-        <!-- 데이터는 AJAX 요청을 통해 동적으로 채워집니다. -->
-        </tbody>
-      </table>
-    </div>
+  <div class="order-list">
+    <h1>주문 목록</h1>
+    <table class="order-table">
+      <thead>
+      <tr>
+        <th>주문 번호</th>
+        <th>상품 이미지</th>
+        <th>상품 이름</th>
+        <th>수량</th>
+        <th>가격</th>
+        <th>상태</th>
+        <th>주문 일자</th>
+      </tr>
+      </thead>
+      <tbody id="ordersTableBody">
+      <!-- 데이터는 AJAX 요청을 통해 동적으로 채워집니다. -->
+      </tbody>
+    </table>
   </div>
 </div>
 
