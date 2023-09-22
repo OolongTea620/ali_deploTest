@@ -31,7 +31,7 @@ public class SellerService {
     private final PasswordEncoder passwordEncoder;;
 
     @Transactional
-    public ResponseEntity<?> signup(SellerSignupRequestDto requestDto) {
+    public MessageResponseDto signup(SellerSignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String storeName = requestDto.getStoreName();
@@ -60,37 +60,32 @@ public class SellerService {
         Seller seller = new Seller(requestDto, password, sellerWallet);
         sellerRepository.save(seller);
 
-
-        return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
+        return new MessageResponseDto("회원가입 성공");
+//        return new ResponseEntity<>(new MessageResponseDto("회원가입 성공"), null, HttpStatus.OK);
 
     }
 
     // 상품 등록한 모든 셀러의 정보 조회
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getStores() {
+    public List<StoreResponseDto> getStores() {
         List<Seller> storeList = sellerRepository.findAll();
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(storeList.stream().map(StoreResponseDto::new).toList());
+        return storeList.stream().map(StoreResponseDto::new).toList();
     }
 
     @Transactional
-    public ResponseEntity<?> updateStore(StoreRequestDto requestDto) {
+    public MessageDataResponseDto updateStore(StoreRequestDto requestDto) {
+
         Seller store = sellerRepository.findById(requestDto.getSellerId()).orElseThrow(
             () -> new NullPointerException("해당 셀러 유저가 없습니다.")
         );
         store.update(requestDto);
-        return ResponseEntity
-            .status(HttpStatus.ACCEPTED)
-            .body(new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store)));
+        return new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store));
     }
 
     @Transactional
-    public ResponseEntity<?> deleteStore(Seller seller) {
+    public MessageResponseDto deleteStore(Seller seller) {
         // 셀러는 회원가입과 동시에 Store 생성이기에
         sellerRepository.delete(seller);
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(new MessageResponseDto("Store 삭제 성공"));
+        return new MessageResponseDto("Store 삭제 성공");
     }
 }

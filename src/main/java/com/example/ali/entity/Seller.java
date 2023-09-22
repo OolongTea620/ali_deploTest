@@ -7,6 +7,7 @@ import com.example.ali.repository.SellerWalletRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter // test
 @NoArgsConstructor
-
 @SQLDelete(sql = "UPDATE seller SET deleted_at = CURRENT_TIMESTAMP where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Seller {
@@ -51,6 +52,24 @@ public class Seller {
     }
 
     //test
+    public Seller(String username) {
+        this.username = username;
+    }
+
+    //test
+    public Seller(String storeName, String info) {
+        this.storeName = storeName;
+        this.info = info;
+    }
+
+    //test
+    public Seller(String username, String password, String storeName, String info,
+        SellerWallet sellerWallet) {
+        this.username = username;
+        this.password = password;
+        this.storeName = storeName;
+        this.info = info;
+    }
     public Seller(Long id, SellerSignupRequestDto requestDto, String password, SellerWallet sellerWallet) {
         this.id = id;
         this.username = requestDto.getUsername();
@@ -61,8 +80,21 @@ public class Seller {
         sellerWallet.setSeller(this);
     }
 
+    public Seller(String username, String password, String storeName, String info) {
+        this.username = username;
+        this.password = password;
+        this.storeName = storeName;
+        this.info = info;
+    }
+
     public void update(StoreRequestDto requestDto) {
         this.storeName = requestDto.getStoreName();
         this.info = requestDto.getInfo();
+    }
+
+    //test
+    public void update(String storeName, String info) {
+        this.storeName = storeName;
+        this.info = info;
     }
 }

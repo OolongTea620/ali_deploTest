@@ -1,5 +1,6 @@
 package com.example.ali.controller;
 
+import com.example.ali.dto.UserWalletResponseDto;
 import com.example.ali.security.UserDetailsImpl;
 import com.example.ali.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class WalletController {
     private final UserService userservice;
     @GetMapping("/api/user/wallet")
-    public ResponseEntity<?> getUserPoint(
+    public ResponseEntity<UserWalletResponseDto> getUserPoint(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return userservice.getUserPoint(userDetails.getUser());
+        return ResponseEntity.ok(userservice.getUserPoint(userDetails.getUser()));
     }
 }
