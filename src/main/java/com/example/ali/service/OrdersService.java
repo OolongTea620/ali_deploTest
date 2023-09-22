@@ -27,24 +27,20 @@ public class OrdersService {
 
     // 상품 주문
     @Transactional
-    public ResponseEntity<MessageDataResponseDto> orderProduct(OrderRequestDto orderRequestDto, User user) {
+    public MessageDataResponseDto orderProduct(OrderRequestDto orderRequestDto, User user) {
         Product product = findProduct(orderRequestDto.getProductId());
         ProductStock productStock = product.getProductStock();
         User realUser = findUser(user.getId());
-
         //구매 금액 선언
         Long totalPrice = orderRequestDto.getQnt() * product.getPrice();
-
         // 재고 확인
         if(!(product.getProductStock().getStock() > orderRequestDto.getQnt())) {
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
-
         // 유저 소지금 확인
         if(!(user.getUserWallet().getPoint() > totalPrice)) {
             throw new IllegalArgumentException("소지금이 부족합니다.");
         }
-
         // 재고 변경
         productStock.changeStock(orderRequestDto.getQnt());
         // 소지금 차감
@@ -54,31 +50,26 @@ public class OrdersService {
         OrdersResponseDto ordersResponseDto = new OrdersResponseDto(orders);
         // 주문 생성
         ordersRepository.save(orders);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new MessageDataResponseDto("주문 성공", ordersResponseDto));
+        return new MessageDataResponseDto("주문 성공", ordersResponseDto);
     }
 
     // 유저 주문 조회
-    public ResponseEntity<?> getUserOrders(User user) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new MessageDataResponseDto("주문 조회 성공", ordersRepository.findAllByUser(user).stream().map(OrdersResponseDto::new).toList()));
+    @Transactional(readOnly = true)
+    public MessageDataResponseDto getUserOrders(User user) {
+        return new MessageDataResponseDto("주문 조회 성공", ordersRepository.findAllByUser(user).stream().map(OrdersResponseDto::new).toList());
     }
 
 
     // 셀러 주문 조회
-    public ResponseEntity<?> getSellerOrders(Seller seller) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new MessageDataResponseDto("주문 조회 성공", ordersRepository.findByProductSellerUsername(seller.getUsername()).stream().map(OrdersResponseDto::new).toList()));
-
+    @Transactional(readOnly = true)
+    public MessageDataResponseDto getSellerOrders(Seller seller) {
+        return new MessageDataResponseDto("주문 조회 성공", ordersRepository.findByProductSellerUsername(seller.getUsername()).stream().map(OrdersResponseDto::new).toList());
     }
 
 
     // 배송 상태 변경
     @Transactional
-    public ResponseEntity<?> changeDeliveryStatus(Long ordersId, OrderStatusRequestDto orderStatusRequestDto, Seller seller) {
+    public MessageDataResponseDto changeDeliveryStatus(Long ordersId, OrderStatusRequestDto orderStatusRequestDto, Seller seller) {
         Orders orders = findOrders(ordersId);
         // 셀러 확인
         if(!orders.getProduct().getSeller().getUsername().equals(seller.getUsername())) {
@@ -86,7 +77,7 @@ public class OrdersService {
         }
         // 배송 상태 변경
         orders.changeDeliveryStatus(orderStatusRequestDto.getStatus());
-        return ResponseEntity.status(HttpStatus.OK).body(new MessageDataResponseDto("배송 상태 변경 성공", new OrdersResponseDto(orders)));
+        return new MessageDataResponseDto("배송 상태 변경 성공", new OrdersResponseDto(orders));
     }
 
     // 주문 찾기
