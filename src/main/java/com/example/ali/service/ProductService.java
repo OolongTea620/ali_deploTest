@@ -5,7 +5,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.ali.dto.MessageDataResponseDto;
-import com.example.ali.dto.MessageResponseDto;
+
+
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
 import com.example.ali.entity.Product;
@@ -37,10 +38,11 @@ public class ProductService {
     private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
-    public String S3Bucket;
+    private String S3Bucket;
 
     @Transactional
-    public ResponseEntity<?> createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException{
+    public MessageDataResponseDto createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException {
+
 
         String imageUrl = getImage(image);
         Product product = new Product(requestDto, seller, imageUrl);
@@ -49,48 +51,40 @@ public class ProductService {
 
         Product newProduct = productRepository.save(product);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct)));
+        return new MessageDataResponseDto("상품 등록 성공", new ProductResponseDto(newProduct));
     }
 
+
     @Transactional
-    public ResponseEntity<?> updateProduct(Long productId, ProductRequestDto requestDto) {
+    public MessageDataResponseDto updateProduct(Long productId, ProductRequestDto requestDto) {
         Product product = findProductById(productId);
         product.update(requestDto);
 
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(new MessageDataResponseDto("상품 수정 성공", new ProductResponseDto(product)));
+        return new MessageDataResponseDto("상품 수정 성공", new ProductResponseDto(product));
     }
 
     @Transactional
-    public ResponseEntity<?> deleteProduct(Long productId) {
+    public MessageDataResponseDto deleteProduct(Long productId) {
         Product product = findProductById(productId);
         productRepository.delete(product);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new MessageResponseDto("상품 삭제 성공"));
+        return new MessageDataResponseDto("상품 삭제 성공", new ProductResponseDto(product));
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchProduct(String keyword) {
+    public List<ProductResponseDto> getSearchProduct(String keyword) {
 
         List<Product> productList = new ArrayList<>();
 
         productList = productRepository.findAllByProductNameLike(keyword);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(productList.stream().map(ProductResponseDto::new).toList());
+        return productList.stream().map(ProductResponseDto::new).toList();
     }
 
-    public ResponseEntity<?> getProducts(){
+    @Transactional
+    public List<ProductResponseDto> getProducts() {
 
         List<Product> productList = productRepository.findAll();
 
-            return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(productList.stream().map(ProductResponseDto::new).toList());
+        return productList.stream().map(ProductResponseDto::new).toList();
     }
 
 
@@ -108,10 +102,9 @@ public class ProductService {
         objectMetadata.setContentLength(size);
 
         amazonS3Client.putObject(
-                new PutObjectRequest(S3Bucket, originName, image.getInputStream(), objectMetadata )
+                new PutObjectRequest(S3Bucket, originName, image.getInputStream(), objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead)
         );
         return amazonS3Client.getUrl(S3Bucket, originName).toString();
     }
-
 }

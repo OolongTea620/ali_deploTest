@@ -9,10 +9,10 @@ public class SellerSignupRequestDto {
     private String storeName;
     private String info;
 
-    public SellerSignupRequestDto(String testSeller, String number, String storeName, String storeInfo) {
-        this.username = testSeller;
-        this.password = number;
+    public SellerSignupRequestDto(String username, String password, String storeName, String info) {
+        this.username = username;
+        this.password = password;
         this.storeName = storeName;
-        this.info = storeInfo;
+        this.info = info;
     }
 }

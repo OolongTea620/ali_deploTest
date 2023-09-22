@@ -50,9 +50,15 @@ public class Seller {
         sellerWallet.setSeller(this);
     }
 
-    public Seller(String store1, String info1) {
-        this.storeName = store1;
-        this.info = info1;
+    //test
+    public Seller(Long id, SellerSignupRequestDto requestDto, String password, SellerWallet sellerWallet) {
+        this.id = id;
+        this.username = requestDto.getUsername();
+        this.password = password;
+        this.storeName = requestDto.getStoreName();
+        this.info = requestDto.getInfo();
+        this.sellerWallet = sellerWallet;
+        sellerWallet.setSeller(this);
     }
 
     public void update(StoreRequestDto requestDto) {
