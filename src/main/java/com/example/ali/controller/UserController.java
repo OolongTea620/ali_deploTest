@@ -46,4 +46,16 @@ public class UserController {
         return num;
     }
 
+    // (뷰) 로그인 페이지 이동
+    @GetMapping("/login-page")
+    public String loginPage() {
+        return "login";
+    }
+
+    // (뷰) 회원가입 페이지 이동
+    @GetMapping("/signup-page")
+    public String signupPage() {
+        return "signup";
+    }
+
 }
