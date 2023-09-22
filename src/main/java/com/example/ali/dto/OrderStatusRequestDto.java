@@ -6,4 +6,8 @@ import lombok.Getter;
 @Getter
 public class OrderStatusRequestDto {
     private OrderStatus status;
+
+    public OrderStatusRequestDto(OrderStatus status) {
+        this.status = status;
+    }
 }

@@ -33,5 +33,14 @@ public class User extends Timestamped{
         userWallet.setUser(this);
     }
 
+    //test
+    public User(Long id, UserSignupRequestDto requestDto, String password, UserWallet userWallet) {
+        this.id = id;
+        this.username = requestDto.getUsername();
+        this.email = requestDto.getEmail();
+        this.password = password;
+        this.userWallet = userWallet;
+        userWallet.setUser(this);
+    }
 
 }

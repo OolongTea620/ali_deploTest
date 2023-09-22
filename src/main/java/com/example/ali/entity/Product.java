@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private String productName;
@@ -51,6 +51,16 @@ public class Product {
 
     public Product(ProductRequestDto requestDto, Seller seller, String imageUrl) {
 
+        this.productName = requestDto.getProductName();
+        this.price = requestDto.getPrice();
+        this.info = requestDto.getInfo();
+        this.imageUrl = imageUrl;
+        this.seller = seller;
+    }
+
+    //test
+    public Product(Long id, ProductRequestDto requestDto, Seller seller, String imageUrl) {
+        this.id = id;
         this.productName = requestDto.getProductName();
         this.price = requestDto.getPrice();
         this.info = requestDto.getInfo();
