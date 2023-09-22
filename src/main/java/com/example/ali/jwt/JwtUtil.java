@@ -19,6 +19,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtUtil {
 
     //쿠키를 직접 만들어서 토큰을 담아 쿠키를 Response 객체에 담아 반환
@@ -38,7 +40,7 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESS_TIME =  10 * 60 * 1000L ; // 1분, 밀리세컨드
+    private final long ACCESS_TIME =  1000L ; // , 밀리세컨드
     private final long REFRESH_TIME  = 60 * 60 * 1000L * 24; // 1일
 
     public static final String ACCESS_TOKEN = "Access_Token";
@@ -65,12 +67,12 @@ public class JwtUtil {
 
     // 어세스 토큰 헤더 설정
     public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-        response.setHeader("Access_Token", accessToken);
+        response.setHeader(ACCESS_TOKEN, accessToken);
     }
 
     // 리프레시 토큰 헤더 설정
     public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-        response.setHeader("Refresh_Token", refreshToken);
+        response.setHeader(REFRESH_TOKEN, refreshToken);
     }
 
     // header 토큰을 가져오는 기능
@@ -92,7 +94,8 @@ public class JwtUtil {
                     .getBody();
             return claims.get("userType", String.class);
         } catch (Exception e) {
-            return null; // 또는 적절한 예외 처리
+            log.error(e.getMessage() + "getUserTypeFromToken");
+            throw new NullPointerException("타입이 없습니다.");
         }
     }
 
