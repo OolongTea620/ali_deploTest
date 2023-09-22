@@ -3,6 +3,7 @@ package com.example.ali.controller;
 import com.example.ali.dto.MessageDataResponseDto;
 import com.example.ali.dto.ProductRequestDto;
 import com.example.ali.dto.ProductResponseDto;
+import com.example.ali.entity.Seller;
 import com.example.ali.security.SellerDetailsImpl;
 import com.example.ali.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,5 +71,13 @@ public class ProductController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(productService.getProducts());
+    }
+
+    @Operation(summary = "셀러 본인의 상품 조회")
+    @GetMapping("/products/seller")
+    public ResponseEntity<List<ProductResponseDto>> getProducts(@AuthenticationPrincipal SellerDetailsImpl sellerDetails) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(productService.getSellerProducts(sellerDetails.getSeller()));
     }
 }
