@@ -29,7 +29,7 @@ function  requestOrder(productData) {
     var Refresh_Token = localStorage.getItem("Refresh_Token");
 
     $.ajax({
-        url:'/order/product',
+        url:'http://localhost:8080/api/order/product',
         type:'POST',
         contentType:'application/json',
         data:JSON.stringify(productData),
@@ -64,22 +64,23 @@ function orderProducts(){
 }
 
 function showProductData(data) {
-    console.log(data);
 }
 
 function searchProducts(){
-    let keyword=document.getElementById("search").value;
-    let searchUrl =  ``;
+    //let keyword = document.getElementById("search").value;
+    let searchUrl =  'http://localhost:8080/api/products';
     $.ajax({
         url:searchUrl,
         type:'GET',
         success:function(response){
-
-            showProductData(response.success());
+            console.log(response);
+            showProductData(response);
         },
         error:function(error){
-            alert('검색 실패');
             console.log(error);
+            alert('조회 실패');
         }
     });
 }
+
+searchProducts();
