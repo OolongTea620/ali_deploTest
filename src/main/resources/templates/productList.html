@@ -1,56 +1,127 @@
 <!DOCTYPE html>
 <head>
-  <meta charset="UTF-8">
-  <title>Product List</title>
-  <link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 <!-- Header Section -->
 <div class="header">
-  <div class="center">
-    <a th:href="@{/}" href="#">Home</a>
-  </div>
-  <div id="loggedOutButtons">
-    <a href="/auth/user/login-page" class="header-button">로그인</a>
-    <a href="/auth/user/signup-page" class="header-button">유저 회원가입</a>
-    <a href="/auth/seller/signup-page" class="header-button">셀러 회원가입</a>
-  </div>
-  <div id="loggedInInfo" style="display: none;">
-    <!-- username과 로그아웃 버튼을 같은 줄에 표시하기 위해 span 요소 사용 -->
-    <span id="usernameSpan"></span>
-    <a href="/" class="header-button" onclick="logout()">로그아웃</a>
-  </div>
+    <div class="center">
+        <a th:href="@{/}" href="#">Home</a>
+    </div>
+    <div id="loggedOutButtons">
+        <a href="/auth/user/login-page" class="header-button">로그인</a>
+        <a href="/auth/user/signup-page" class="header-button">유저 회원가입</a>
+        <a href="/auth/seller/signup-page" class="header-button">셀러 회원가입</a>
+    </div>
+    <div id="loggedInInfo" style="display: none;">
+        <!-- username과 로그아웃 버튼을 같은 줄에 표시하기 위해 span 요소 사용 -->
+        <span id="usernameSpan"></span>
+        <a href="/" class="header-button" onclick="logout()">로그아웃</a>
+    </div>
 </div>
 
 <div style="display: flex;">
-  <!-- Aside Section -->
-  <div th:replace="aside :: aside"></div>
-  <div th:fragment="product-list">
-<div class="product-list">
-  <h1>상품 목록</h1>
-  <table>
-    <thead>
-    <tr>
-      <th>상품 이름</th>
-      <th>가격</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="product : ${products}">
-      <td th:text="${product.name}">상품 이름</td>
-      <td th:text="${product.price}">가격</td>
-    </tr>
-    </tbody>
-  </table>
-  <div class="paging">
-<!--    <a th:href="@{/product?page=0}" href="#">처음</a>-->
-<!--    <a th:href="@{{/product?page=${page-1}}}" href="#">이전</a>-->
-<!--    <a th:href="@{{/product?page=${page+1}}}" href="#">다음</a>-->
-<!--    <a th:href="@{/product?page=last}" href="#">마지막</a>-->
-  </div>
+    <!-- Aside Section -->
+    <div th:replace="aside :: aside"></div>
+    <div th:fragment="product-list">
+        <div class="product-list store-management-content">
+            <h1>상품 목록</h1>
+            <h1>상품목록</h1>
+            <!--검색바추가-->
+            <div>
+                <label for="search">검색:</label>
+                <input type="text" id="search"/>
+                <button type="button" onclick="searchProducts()">검색</button>
+            </div>
+
+            <div id="productList">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>상품번호</th>
+                        <th>이미지</th>
+                        <th>상품명</th>
+                        <th>가격</th>
+                        <th>재고</th>
+                        <th>샐러정보</th>
+                        <th>구매하기</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><img src="" alt="ProductImage" width="50" height="50"/></td>
+                        <td>제품명</td>
+                        <td>10000</td>
+                        <td>1000</td>
+                        <td>
+                            <button onclick="">보기</button>
+                        </td>
+                        <td>
+                            <button class="orderFormOpen">구매하기</button>
+                        </td>
+                    </tr>
+                    <tr th:each="product:${products}">
+                        <td th:text="${product.productId}">ProductID</td>
+                        <td><img th:src="${product.productImage}" alt="ProductImage" width="50" height="50"/></td>
+                        <td th:text="${product.productName}">ProductTitle</td>
+                        <td th:text="${product.price}">Price</td>
+                        <td th:text="${product.stock}">Info</td>
+                        <td>
+                            <button onclick="">보기</button>
+                        </td>
+                        <td>
+                            <button class="orderFormOpen">구매하기</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div> <!-- Table End -->
+
+            <!--ProductAdd/EditModal-->
+            <div id="productModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2 id="modalTitle">제품구매</h2>
+                    <form id="productForm">
+                        <label for="productId"></label>
+                        <input type=text name="productId" id="productId" hidden="hidden">
+
+                        <div>
+                            <span>제품 가격:</span>
+                            <span id="productPrice">0</span>
+                        </div>
+
+                        <div>
+                            <span>재고:</span>
+                            <span id="stock">0</span>
+                        </div>
+
+                        <div>
+                            <label for="qntity">수량:</label>
+                            <input type="text" id="qntity" name="qntity" value="0">
+                        </div>
+
+                        <div>
+                            <span>총액</span>
+                            <span id = total_price>0</span>
+                        </div>
+
+                        <div class="modal-btn-set">
+                            <button type="button" id="addButton" onclick="orderProducts()">구매하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div> <!-- modal end -->
+        </div>
+    </div>
 </div>
-</div>
-  </div>
-</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/js/basic.js"></script>
+<script src="/js/product-list.js"></script>
+</body>
 </html>

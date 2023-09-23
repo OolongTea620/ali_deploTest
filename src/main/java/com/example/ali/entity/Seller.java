@@ -69,6 +69,8 @@ public class Seller {
         this.password = password;
         this.storeName = storeName;
         this.info = info;
+        this.sellerWallet =sellerWallet;
+        sellerWallet.setSeller(this);
     }
     public Seller(Long id, SellerSignupRequestDto requestDto, String password, SellerWallet sellerWallet) {
         this.id = id;

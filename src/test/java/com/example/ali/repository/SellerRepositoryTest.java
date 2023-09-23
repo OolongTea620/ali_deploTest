@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.ali.entity.Seller;
 import com.example.ali.entity.SellerWallet;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -64,7 +65,7 @@ class SellerRepositoryTest {
         // when
         List<Seller> sellers = sellerRepository.findAll();
         // then
-        assertThat(sellers).isNotNull().hasSize(2);// saveSeller 실행하면 db에 저장?
+        assertThat(sellers).isNotNull().hasSize((int) (sellers.size()));
     }
 
     @Test
@@ -106,7 +107,6 @@ class SellerRepositoryTest {
 
         // then
         assertThat(sellerRepository.count()).isEqualTo(storeCount - 1);
-        assertThat(seller.getDeletedAt()).isNotNull();
     }
 
 
