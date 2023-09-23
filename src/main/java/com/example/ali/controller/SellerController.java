@@ -42,8 +42,9 @@ public class SellerController {
 
     @Operation(summary = "store 수정")
     @PutMapping("/api/seller/store")
-    public ResponseEntity<MessageDataResponseDto> updateStore(@RequestBody StoreRequestDto requestDto){
-        return ResponseEntity.ok(sellerService.updateStore(requestDto));
+    public ResponseEntity<MessageDataResponseDto> updateStore(@RequestBody StoreRequestDto requestDto,
+                                                              @AuthenticationPrincipal SellerDetailsImpl sellerDetails){
+        return ResponseEntity.ok(sellerService.updateStore(requestDto, sellerDetails.getSeller()));
 
     }
 

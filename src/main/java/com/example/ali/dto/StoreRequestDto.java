@@ -6,12 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter // test
 public class StoreRequestDto {
-    private Long sellerId;
     private String storeName;
     private String info;
 
-    public StoreRequestDto(Long sellerId, String storeName, String info) {
-        this.sellerId = sellerId;
+    public StoreRequestDto(String storeName, String info) {
         this.storeName = storeName;
         this.info = info;
     }

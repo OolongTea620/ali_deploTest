@@ -30,6 +30,21 @@
     </div>
 </div>
 
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Edit Store Information</h2>
+        <label for="storeName">Store Name:</label>
+        <input type="text" id="storeName" placeholder="Enter store name">
+        <label for="info">Shop Information:</label>
+        <input type="text" id="info" placeholder="Enter shop information">
+        <button onclick="updateStore()">Save Changes</button>
+    </div>
+</div>
+<div style="margin-top: 20px; text-align: center;">
+    <button onclick="openModal()">Edit my store information</button>
+</div>
+
 <script>
     var Access_Token = localStorage.getItem("Access_Token");
     var Refresh_Token = localStorage.getItem("Refresh_Token");
@@ -68,6 +83,39 @@
             row.insertCell(2).textContent = store.info;
 
         });
+    }
+    function openModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "none";
+    }
+    function updateStore() {
+        var storeName = document.getElementById("storeName").value;
+        var info = document.getElementById("info").value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", "api/seller/store");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log("Store information updated successfully.");
+                closeModal(); // Close the modal after successful update
+                // You may want to reload the page or update the store information in the UI
+            } else {
+                console.error("Failed to update store information:", xhr.responseText);
+            }
+        };
+        var requestBody = JSON.stringify({
+            "storeName": storeName,
+            "info": info
+        });
+        xhr.send(requestBody);
     }
 
 </script>
