@@ -36,9 +36,14 @@ window.onload = function() {
             return;
         }
 
-        if (payload.userType !== 'SELLER') {
+        if (payload.userType === 'SELLER') {
+            document.getElementById('productManagement').style.display = 'block';
+            document.getElementById('storeManagement').style.display = 'block';
+            document.getElementById('orderManagementLink').setAttribute('href', '/seller3');
+        } else {
             document.getElementById('productManagement').style.display = 'none';
             document.getElementById('storeManagement').style.display = 'none';
+            document.getElementById('orderManagementLink').setAttribute('href', '/orders');
         }
 
         const username = payload.sub;

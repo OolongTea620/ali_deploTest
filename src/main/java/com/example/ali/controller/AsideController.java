@@ -43,17 +43,17 @@ public class AsideController {
         return "storeManagement"; // 상품 관리 페이지로 이동
     }
 
-    @GetMapping("/seller")
+    @GetMapping("/seller") // 상품관리페이지
     public String showStore(Model model) {
         // 여기에 상품 관리 로직을 추가하세요.
         return "store"; // 상품 관리 페이지로 이동
     }
-    @GetMapping("/seller2")
+    @GetMapping("/seller2") // 스토어 관리 (전체목록 조회 등...)
     public String showStore2(Model model) {
         // 여기에 상품 관리 로직을 추가하세요.
         return "store2"; // 상품 관리 페이지2로 이동
     }
-    @GetMapping("/seller3")
+    @GetMapping("/seller3")  // 셀러 주문 조회
     public String showStore3(Model model) {
         // 여기에 상품 관리 로직을 추가하세요.
         return "store3"; // 상품 관리 페이지2로 이동

@@ -386,3 +386,31 @@
     background-color: #0056b3;
 }
 
+/* 기본 테이블 스타일링 */
+table {
+    width: 100%;
+    border-collapse: collapse; /* 테이블 간격 없애기 */
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+/* 헤더 스타일 */
+thead th {
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+/* 홀수/짝수 행 스타일 */
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+/* 행에 마우스가 있을 때 스타일 */
+tbody tr:hover {
+    background-color: #e6e6e6;
+}
+
