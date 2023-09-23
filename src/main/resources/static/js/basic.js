@@ -1,28 +1,55 @@
-// basic.js
+let isLoggingOut = false;  // 로그아웃 중인지 확인하는 전역 플래그
 
-// 공통으로 사용할 API 요청 함수
-function sendRequest(method, url, data, callback) {
-    var token = localStorage.getItem("Access_Token");
-    var xhr = new XMLHttpRequest();
-    xhr.open(method, url);
-    xhr.setRequestHeader("Authorization", token);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhr.onload = function() {
-        if (xhr.status === 200 || xhr.status === 201) {
-            var Access_Token = xhr.getResponseHeader("Access_Token");
-            if (Access_Token) {
-                localStorage.setItem("Access_Token", Access_Token);
-            }
-
-            var Refresh_Token = xhr.getResponseHeader("Refresh_Token");
-            if (Refresh_Token) {
-                localStorage.setItem("Refresh_Token", Refresh_Token);
-            }
-        }
-        callback(xhr);
-    };
-    xhr.send(JSON.stringify(data));
+function logout() {
+    isLoggingOut = true;  // 로그아웃 중임을 표시
+    localStorage.removeItem("Access_Token");
+    localStorage.removeItem("Refresh_Token");
+    location.reload();
 }
 
-// 다른 파일에서 사용할 수 있도록 export
-export { sendRequest };
+window.onload = function() {
+    if (isLoggingOut) {
+        return;  // 로그아웃 중일 경우, 나머지 로직을 건너뛴다.
+    }
+
+    const token = localStorage.getItem('Access_Token');
+    const currentPath = window.location.pathname;
+
+    if (!token) {
+        if (currentPath === '/store' || currentPath === '/seller') {
+            alert("권한이 없습니다.");
+            window.location.href = '/';
+            return;
+        }
+
+        const loggedOutButtons = document.getElementById('loggedOutButtons');
+        loggedOutButtons.style.display = 'block';
+        document.getElementById('productManagement').style.display = 'none';
+        document.getElementById('storeManagement').style.display = 'none';
+    } else {
+        const decodedToken = atob(token.split('.')[1]);
+        const payload = JSON.parse(decodedToken);
+
+        if (payload.userType !== 'SELLER' && (currentPath === '/store' || currentPath === '/seller')) {
+            alert("권한이 없습니다.");
+            window.location.href = '/';
+            return;
+        }
+
+        if (payload.userType !== 'SELLER') {
+            document.getElementById('productManagement').style.display = 'none';
+            document.getElementById('storeManagement').style.display = 'none';
+        }
+
+        const username = payload.sub;
+        const userType = payload.userType;
+
+        const greetingMessage = `[${userType}] ${username}  `;
+        const usernameSpan = document.getElementById('usernameSpan');
+        usernameSpan.textContent = greetingMessage;
+
+        const loggedOutButtons = document.getElementById('loggedOutButtons');
+        loggedOutButtons.style.display = 'none';
+        document.getElementById('loggedInInfo').style.display = 'block';
+    }
+}

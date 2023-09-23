@@ -7,31 +7,45 @@
 </head>
 <body>
 <div th:fragment="aside" class="aside">
-<div class="aside">
-    <!-- Product List with Paging -->
-    <div class="section">
-        <h2><a th:href="@{/product}" href="#">상품 목록</a></h2>
-    </div>
+    <div class="aside">
+        <!-- Product List with Paging -->
+        <div class="section">
+            <h2><a th:href="@{/product}" href="#">상품 목록</a></h2>
+        </div>
 
-    <!-- Order List -->
-    <div class="section">
-        <h2><a th:href="@{/orders}" href="#">주문 관리</a></h2>
-    </div>
+        <!-- Order List -->
+        <div class="section">
+            <h2><a th:href="@{/orders}" href="#">주문 관리</a></h2>
+        </div>
 
-    <!-- Product Management (Visible only to 'seller' role) -->
-    <div class="section">  <!--    th:if="${userRole} == 'seller'-->
-        <h2><a th:href="@{/store}" href="#">상품 관리</a></h2>
-    </div>
+        <!-- Product Management (Visible only to 'seller' role) -->
+        <div class="section" id="productManagement">
+            <h2><a th:href="@{/store}" href="#">상품 관리</a></h2>
+        </div>
 
-    <div class="section">  <!--    th:if="${userRole} == 'seller'-->
-        <h2><a th:href="@{/seller}" href="#">매장 관리</a></h2>
+        <div class="section" id="storeManagement">
+            <h2><a th:href="@{/seller}" href="#">매장 관리</a></h2>
+        </div>
     </div>
-
-<!--    Test용-->
-    <div class="section">  <!--    th:if="${userRole} == 'seller'-->
-        <h2><a th:href="@{/tested}" href="#">test 관리</a></h2>
-    </div>
-</div>
 </div>
 </body>
+<script>
+    window.onload = function() {
+        // 1. 로컬 스토리지에서 JWT 토큰을 가져옵니다.
+        const token = localStorage.getItem('Access_Token');
+        console.log(token);
+
+        // 2. JWT 토큰을 디코드하여 userType을 확인합니다.
+        const decodedToken = atob(token.split('.')[1]);
+        const payload = JSON.parse(decodedToken);
+
+        // 3. userType이 "SELLER"인 경우에만 특정 메뉴를 보여줍니다.
+        if (payload.userType !== 'SELLER') {
+            document.getElementById('productManagement').style.display = 'none'; // 상품 관리 메뉴 숨기기
+            document.getElementById('storeManagement').style.display = 'none';   // 매장 관리 메뉴 숨기기
+        }
+    }
+</script>
+
+
 </html>
