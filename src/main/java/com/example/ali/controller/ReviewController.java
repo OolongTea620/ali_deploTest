@@ -36,7 +36,7 @@ public class ReviewController {
             @RequestBody ReviewRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return reviewService.updateReview(requestDto, orderId, userDetails.getUser());
+        return reviewService.updateReview(requestDto, userDetails.getUser());
     }
 
     @DeleteMapping("/api/review/{orderId}")
@@ -44,6 +44,6 @@ public class ReviewController {
             @PathVariable Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return reviewService.deleteReview(reviewId, userDetails.getUser());
+        return reviewService.deleteReview(orderId, userDetails.getUser());
     }
 }

@@ -70,6 +70,7 @@ public class ReviewService {
             throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
         }
 
+
 //        if (!(review.getOrders().getUser().equals(user))) {
 //            throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
 //        }
