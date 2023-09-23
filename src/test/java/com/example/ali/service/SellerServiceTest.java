@@ -113,18 +113,18 @@ class SellerServiceTest {
     public void updateStore(){
         // given
         StoreRequestDto requestDto = new StoreRequestDto();
-        requestDto.setSellerId(1L);
+//        requestDto.setSellerId(1L);
         requestDto.setInfo("Info1 update");
         requestDto.setStoreName("Store1 update");
 
 
         Seller seller = new Seller();
 //        Seller seller = new Seller("Store1", "Info1");
-//        seller.setId(1L);
+        seller.setId(1L);
 
         // when
         when(sellerRepository.findById(1L)).thenReturn(Optional.of(seller));
-        MessageDataResponseDto messageDataResponseDto = sellerService.updateStore(requestDto);
+        MessageDataResponseDto messageDataResponseDto = sellerService.updateStore(requestDto, seller);
 
         // then
         StoreResponseDto updatedStore = (StoreResponseDto) messageDataResponseDto.getData();
