@@ -23,6 +23,7 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
 
 
@@ -116,4 +117,5 @@ public class OrdersService {
                 () -> new IllegalArgumentException("해당 셀러를 찾을 수 없습니다.")
         );
     }
+
 }

@@ -46,7 +46,7 @@ public class Review {
 //        this.orders = order;
 //    }
 
-    public Review(ReviewRequestDto requestDto, Orders order) {
+    public Review(ReviewRequestDto requestDto, Orders orders) {
         this.comment = requestDto.getComment();
         this.rating = requestDto.getRating();
         this.orders = orders;
