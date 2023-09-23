@@ -1,9 +1,21 @@
+let isLoggingOut = false;  // 로그아웃 중인지 확인하는 전역 플래그
+
+function logout() {
+    isLoggingOut = true;  // 로그아웃 중임을 표시
+    localStorage.removeItem("Access_Token");
+    localStorage.removeItem("Refresh_Token");
+    location.reload();
+}
+
 window.onload = function() {
+    if (isLoggingOut) {
+        return;  // 로그아웃 중일 경우, 나머지 로직을 건너뛴다.
+    }
+
     const token = localStorage.getItem('Access_Token');
     const currentPath = window.location.pathname;
 
     if (!token) {
-        // 현재 엔드포인트가 /store 또는 /seller일 때 토큰이 없으면 리다이렉트
         if (currentPath === '/store' || currentPath === '/seller') {
             alert("권한이 없습니다.");
             window.location.href = '/';
@@ -12,14 +24,12 @@ window.onload = function() {
 
         const loggedOutButtons = document.getElementById('loggedOutButtons');
         loggedOutButtons.style.display = 'block';
-
         document.getElementById('productManagement').style.display = 'none';
         document.getElementById('storeManagement').style.display = 'none';
     } else {
         const decodedToken = atob(token.split('.')[1]);
         const payload = JSON.parse(decodedToken);
 
-        // userType이 SELLER가 아니면서 /store 또는 /seller에 접속한 경우 리다이렉트
         if (payload.userType !== 'SELLER' && (currentPath === '/store' || currentPath === '/seller')) {
             alert("권한이 없습니다.");
             window.location.href = '/';
