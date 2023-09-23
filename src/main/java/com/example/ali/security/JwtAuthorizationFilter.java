@@ -59,6 +59,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 // 리프레시 토큰이 만료 || 리프레시 토큰이 DB와 비교했을때 똑같지 않다면
             }
         }
+        else {
+            setAuthentication(jwtUtil.getUsernameFromToken(accessToken), userType);
+        }
         filterChain.doFilter(req, res);
     }
 
@@ -74,6 +77,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     // 인증 객체 생성
     private Authentication createAuthentication(String username, String usertype) {
         UserDetails userDetails = customLoginService.loadUserByUsername(username);
+        log.info("username={}", username);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

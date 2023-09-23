@@ -2,8 +2,10 @@ package com.example.ali.controller;
 
 import com.example.ali.entity.Orders;
 import com.example.ali.entity.Product;
+import com.example.ali.entity.Review;
 import com.example.ali.repository.OrdersRepository;
 import com.example.ali.repository.ProductRepository;
+import com.example.ali.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,9 @@ public class AsideController {
     private ProductRepository productRepository;
     @Autowired
     private OrdersRepository ordersRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @GetMapping("/product")
     public String showProductList(Model model) {
@@ -48,4 +53,12 @@ public class AsideController {
         // 여기에 상품 관리 로직을 추가하세요.
         return "store"; // 상품 관리 페이지로 이동
     }
+
+//    @GetMapping("/reviews")
+//    public String showReview(Model model) {
+//        List<Review> reviews = reviewRepository.findAll();
+//        model.addAttribute("reviews", reviews);
+//        // 여기에 상품 관리 로직을 추가하세요.
+//        return "reviewList"; // 상품 관리 페이지로 이동
+//    }
 }

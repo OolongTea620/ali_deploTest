@@ -25,6 +25,14 @@ public class OrdersService {
     private final UserRepository userRepository;
 
 
+
+    public MessageDataResponseDto getReview(Long orderId) {
+        Orders orders = ordersRepository.findById(orderId).orElseThrow(() ->
+            new IllegalArgumentException("해당 주문이 없습니다."));
+
+        return new MessageDataResponseDto("리뷰 조회 성공", orders.getReview());
+    }
+
     // 상품 주문
     @Transactional
     public MessageDataResponseDto orderProduct(OrderRequestDto orderRequestDto, User user) {

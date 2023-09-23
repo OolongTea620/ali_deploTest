@@ -46,10 +46,13 @@ public class ReviewService {
         Orders order = ordersRepository.findById(requestDto.getOrderId())
                 .orElseThrow(() -> new NullPointerException("해당하는 주문이 존재하지 않습니다"));
 
-        if (!order.getUser().equals(user)) {
+        if (!(order.getUser().getId().equals(user.getId()))) {
             throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
         }
-        Review review = reviewRepository.save(new Review(requestDto,order));
+//        if (!order.getUser().equals(user)) {
+//            throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
+//        }
+        Review review = reviewRepository.save(new Review(requestDto, order));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED.value())
@@ -60,9 +63,14 @@ public class ReviewService {
     public ResponseEntity<ReviewResponseDto> updateReview(ReviewRequestDto requestDto, Long reviewId, User user) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NullPointerException("해당하는 리뷰가 존재하지 않습니다"));
-        if (!review.getOrders().getUser().equals(user)) {
+        if (!(review.getOrders().getUser().getId().equals(user.getId()))) {
             throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
         }
+
+//        if (!(review.getOrders().getUser().equals(user))) {
+//            throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
+//        }
+//
         review.update(requestDto);
         return ResponseEntity.accepted().body(new ReviewResponseDto(review));
     }
@@ -72,9 +80,13 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new NullPointerException("해당하는 리뷰가 존재하지 않습니다"));
 
-        if (!review.getOrders().getUser().equals(user)) {
+        if (!(review.getOrders().getUser().getId().equals(user.getId()))) {
             throw new IllegalArgumentException("삭제 권한이 없는 유저 입니다.");
         }
+//
+//        if (!(review.getOrders().getUser().equals(user))) {
+//            throw new IllegalArgumentException("삭제 권한이 없는 유저 입니다.");
+//        }
 
         reviewRepository.delete(review);
         return ResponseEntity.ok(new MessageResponseDto("삭제 성공"));

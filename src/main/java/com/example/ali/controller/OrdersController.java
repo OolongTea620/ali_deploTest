@@ -21,6 +21,13 @@ import java.util.List;
 public class OrdersController {
     private final OrdersService ordersService;
 
+    // 해당 주문에 따른 리뷰 조회
+    @Operation(summary = "해당 주문에 따른 리뷰 조회 ")
+    @GetMapping("/user/order/review/{orderId}")
+    public ResponseEntity<MessageDataResponseDto> getOrderReview(@PathVariable Long orderId) {
+        return ResponseEntity.status(200).body(ordersService.getReview(orderId));
+    }
+
     // 주문 확인 조회
     @Operation(summary = "주문 확인 조회")
     @GetMapping("/seller/orders")
@@ -50,5 +57,6 @@ public class OrdersController {
     public ResponseEntity<MessageDataResponseDto> getUserOrders(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.status(200).body(ordersService.getUserOrders(userDetails.getUser()));
     }
+
 
 }

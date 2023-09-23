@@ -5,9 +5,11 @@ import com.example.ali.dto.OrderStatusRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Orders extends Timestamped{
     @Id
@@ -31,6 +33,10 @@ public class Orders extends Timestamped{
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @OneToOne
+    @JoinColumn(name = "review_id")
+    private Review review;
 
     public Orders(OrderRequestDto orderRequestDto, User user, Product product) {
         this.totalPrice = product.getPrice() * orderRequestDto.getQnt();
