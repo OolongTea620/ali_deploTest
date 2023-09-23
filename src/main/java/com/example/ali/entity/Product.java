@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 
 @Setter
 @NoArgsConstructor
+//@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE product SET deleted_at = CURRENT_TIMESTAMP, product_status = 'DISCONTINUED' where id = ?")
-@Where(clause = "deleted_at IS NULL")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

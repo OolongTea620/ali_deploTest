@@ -10,4 +10,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByProductNameLike(String keyword);
 
     List<Product> findAllBySeller(Seller seller);
+
+    List<Product> findAllBySellerAndDeletedAtIsNull(Seller seller);
 }

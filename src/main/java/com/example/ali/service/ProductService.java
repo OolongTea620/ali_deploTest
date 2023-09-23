@@ -96,7 +96,7 @@ public class ProductService {
     @Transactional
     public List<ProductResponseDto> getSellerProducts(Seller seller) {
 
-        List<Product> productList = productRepository.findAllBySeller(seller);
+        List<Product> productList = productRepository.findAllBySellerAndDeletedAtIsNull(seller);
 
         return productList.stream().map(ProductResponseDto::new).toList();
     }
