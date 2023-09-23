@@ -25,11 +25,19 @@ $('.orderFormOpen').on('click', function() {
 })
 
 function  requestOrder(productData) {
+    var Access_Token = localStorage.getItem("Access_Token");
+    var Refresh_Token = localStorage.getItem("Refresh_Token");
+
     $.ajax({
         url:'/order/product',
         type:'POST',
         contentType:'application/json',
         data:JSON.stringify(productData),
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Content-type","application/json");
+            xhr.setRequestHeader("Access_Token", Access_Token);
+            xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+        },
         success:function(response){
             alert('상품이 성공적으로 구입되었습니다.');
         },
@@ -66,7 +74,7 @@ function searchProducts(){
         url:searchUrl,
         type:'GET',
         success:function(response){
-            alert('keyword가 정상적으로 검색되었습니다');
+
             showProductData(response.success());
         },
         error:function(error){
