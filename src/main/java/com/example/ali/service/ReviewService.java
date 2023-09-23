@@ -11,6 +11,7 @@ import com.example.ali.repository.OrdersRepository;
 import com.example.ali.repository.ProductRepository;
 import com.example.ali.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -60,9 +62,10 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity<ReviewResponseDto> updateReview(ReviewRequestDto requestDto, Long reviewId, User user) {
-        Review review = reviewRepository.findById(reviewId)
+    public ResponseEntity<ReviewResponseDto> updateReview(ReviewRequestDto requestDto, User user) {
+        Review review = reviewRepository.findByOrders_Id(requestDto.getOrderId())
                 .orElseThrow(() -> new NullPointerException("해당하는 리뷰가 존재하지 않습니다"));
+        log.info("reiview.getId()={}", review.getId());
         if (!(review.getOrders().getUser().getId().equals(user.getId()))) {
             throw new IllegalArgumentException("작성 권한이 없는 유저 입니다.");
         }
@@ -76,8 +79,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public ResponseEntity<MessageResponseDto> deleteReview(Long reviewId, User user) {
-        Review review = reviewRepository.findById(reviewId)
+    public ResponseEntity<MessageResponseDto> deleteReview(Long orderId, User user) {
+        Review review = reviewRepository.findByOrders_Id(orderId)
                 .orElseThrow(() -> new NullPointerException("해당하는 리뷰가 존재하지 않습니다"));
 
         if (!(review.getOrders().getUser().getId().equals(user.getId()))) {
@@ -87,7 +90,6 @@ public class ReviewService {
 //        if (!(review.getOrders().getUser().equals(user))) {
 //            throw new IllegalArgumentException("삭제 권한이 없는 유저 입니다.");
 //        }
-
         reviewRepository.delete(review);
         return ResponseEntity.ok(new MessageResponseDto("삭제 성공"));
     }
