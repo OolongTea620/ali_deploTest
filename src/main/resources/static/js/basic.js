@@ -16,38 +16,33 @@ window.onload = function() {
     const currentPath = window.location.pathname;
 
     if (!token) {
-        if (currentPath === '/store' || currentPath === '/seller') {
-            alert("권한이 없습니다.");
-            window.location.href = '/';
-            return;
-        }
-
-        const loggedOutButtons = document.getElementById('loggedOutButtons');
-        loggedOutButtons.style.display = 'block';
+        // 토큰이 없는 경우 (비회원)
         document.getElementById('productManagement').style.display = 'none';
         document.getElementById('storeManagement').style.display = 'none';
+        document.getElementById('orderManagementLink').style.display = 'none';
     } else {
         const decodedToken = atob(token.split('.')[1]);
         const payload = JSON.parse(decodedToken);
+        const userType = payload.userType;
 
-        if (payload.userType !== 'SELLER' && (currentPath === '/store' || currentPath === '/seller')) {
-            alert("권한이 없습니다.");
-            window.location.href = '/';
-            return;
-        }
-
-        if (payload.userType === 'SELLER') {
+        if (userType === 'SELLER') {
+            // SELLER인 경우 모든 메뉴가 보임
             document.getElementById('productManagement').style.display = 'block';
             document.getElementById('storeManagement').style.display = 'block';
             document.getElementById('orderManagementLink').setAttribute('href', '/seller3');
-        } else {
+        } else if (userType === 'USER') {
+            // USER인 경우 상품 목록, 주문 관리만 보임
             document.getElementById('productManagement').style.display = 'none';
             document.getElementById('storeManagement').style.display = 'none';
             document.getElementById('orderManagementLink').setAttribute('href', '/orders');
+        } else {
+            // 그 외 경우 (예: 토큰은 있지만 userType이 SELLER나 USER가 아닌 경우)
+            document.getElementById('productManagement').style.display = 'none';
+            document.getElementById('storeManagement').style.display = 'none';
+            document.getElementById('orderManagementLink').style.display = 'none';
         }
 
         const username = payload.sub;
-        const userType = payload.userType;
 
         const greetingMessage = `[${userType}] ${username}  `;
         const usernameSpan = document.getElementById('usernameSpan');
