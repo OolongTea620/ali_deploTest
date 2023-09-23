@@ -133,6 +133,12 @@
     <div th:replace="aside :: aside"></div>
     <div class="order-list">
         <h1>상품 목록</h1>
+        <!-- 검색창 추가 시작 -->
+        <div class="search-container">
+            <input type="text" id="productSearchInput" placeholder="상품 이름으로 검색...">
+            <button onclick="searchProducts()">검색</button>
+        </div>
+        <!-- 검색창 추가 끝 -->
         <table class="product-table">
             <thead>
             <tr>
@@ -220,7 +226,74 @@ window.onclick = function(event) {
         reviewModal.style.display = "none";
     }
 }
+// 검색창
+function searchProducts() {
+    const keyword = document.getElementById("productSearchInput").value;
 
+    if (!keyword.trim()) {
+        alert("검색어를 입력하세요.");
+        return;
+    }
+
+    const endpoint = `/api/seller/products?keyword=${encodeURIComponent(keyword)}`;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", endpoint);
+
+    // 토큰들을 요청 헤더에 추가 (이전 코드와 동일)
+    const access_token = localStorage.getItem("Access_Token");
+    const refresh_token = localStorage.getItem("Refresh_Token");
+    if (access_token) {
+        xhr.setRequestHeader("Access_Token", access_token);
+    }
+    if (refresh_token) {
+        xhr.setRequestHeader("Refresh_Token", refresh_token);
+    }
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const products = JSON.parse(xhr.responseText);
+            const tableBody = document.getElementById("productTableBody");
+            tableBody.innerHTML = '';  // 테이블 내용 초기화
+
+            products.forEach(product => {
+                let row = tableBody.insertRow();
+
+                row.insertCell(0).textContent = product.productId;
+
+                const imgCell = row.insertCell(1);
+                const img = document.createElement("img");
+                img.src = product.imgUrl;
+                img.alt = product.productName;
+                imgCell.appendChild(img);
+
+                const productNameCell = row.insertCell(2);
+                productNameCell.textContent = product.productName;
+                productNameCell.style.cursor = 'pointer';
+                productNameCell.onclick = function() {
+                    showProductModal(product);
+                };
+
+                row.insertCell(3).textContent = product.price;
+                row.insertCell(4).textContent = product.stock;
+
+                const actionCell = row.insertCell(5);
+                if (userType === "USER") {
+                    const buyButton = document.createElement("button");
+                    buyButton.textContent = "Buy";
+                    buyButton.onclick = function() {
+                        orderProduct(product.productId);
+                    };
+                    actionCell.appendChild(buyButton);
+                }
+            });
+        } else {
+            alert("검색 중 오류가 발생했습니다.");
+        }
+    };
+
+    xhr.send();
+}
 
     // 여기까지
     const Access_Token = localStorage.getItem("Access_Token");
