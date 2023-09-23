@@ -63,10 +63,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         try {
             // 요청 본문이 비어 있는지 확인
-            if (request.getContentLength() == 0) {
-                return null;
-//                throw new RuntimeException("요청 본문이 비어 있습니다.");
-            }
+//            if (request.getContentLength() == 0) {
+//                return null;
+////                throw new RuntimeException("요청 본문이 비어 있습니다.");
+//            }
             LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
 
             String userType = requestDto.getUserType();
@@ -105,12 +105,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username;
         String userType;
 
-        if (principal instanceof UserDetailsImpl) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) principal;
+        if (principal instanceof UserDetailsImpl userDetails) {
             username = userDetails.getUsername();
             userType = "USER"; // 또는 UserDetailsImpl 클래스에 userType 필드를 추가하여 userType = userDetails.getUserType(); 로 설정
-        } else if (principal instanceof SellerDetailsImpl) {
-            SellerDetailsImpl sellerDetails = (SellerDetailsImpl) principal;
+        } else if (principal instanceof SellerDetailsImpl sellerDetails) {
             username = sellerDetails.getUsername();
             userType = "SELLER"; // 또는 SellerDetailsImpl 클래스에 userType 필드를 추가하여 userType = sellerDetails.getUserType(); 로 설정
         } else {

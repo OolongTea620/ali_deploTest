@@ -44,7 +44,13 @@ public class ProductService {
     public MessageDataResponseDto createProduct(ProductRequestDto requestDto, Seller seller, MultipartFile image) throws IOException {
 
 
-        String imageUrl = getImage(image);
+        String imageUrl;
+        if (!image.isEmpty()) {
+            imageUrl = getImage(image);
+        } else {
+            imageUrl = "https://elasticbeanstalk-ap-northeast-2-940107362230.s3.ap-northeast-2.amazonaws.com/2bb2f447-1a80-4a99-9d15-491f9cd872df";
+        }
+
         Product product = new Product(requestDto, seller, imageUrl);
         ProductStock productStock = new ProductStock(requestDto.getStock(), product);
         product.setProductStock(productStock);
@@ -87,6 +93,14 @@ public class ProductService {
         return productList.stream().map(ProductResponseDto::new).toList();
     }
 
+    @Transactional
+    public List<ProductResponseDto> getSellerProducts(Seller seller) {
+
+        List<Product> productList = productRepository.findAllBySeller(seller);
+
+        return productList.stream().map(ProductResponseDto::new).toList();
+    }
+
 
     private Product findProductById(Long productId) {
         return productRepository.findById(productId)
@@ -107,4 +121,6 @@ public class ProductService {
         );
         return amazonS3Client.getUrl(S3Bucket, originName).toString();
     }
+
+
 }

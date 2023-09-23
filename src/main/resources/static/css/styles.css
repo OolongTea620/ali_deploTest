@@ -338,3 +338,79 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.header-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 5px;
+    display: inline-block; /* 인라인 블록으로 설정하여 다른 요소와 같은 라인에 표시 */
+}
+
+.header-button:hover {
+    background-color: #0056b3;
+}
+
+/* 헤더 내부의 우측 정렬을 위한 스타일 */
+.header .right-buttons {
+    display: flex;
+    align-items: center;
+}
+
+/* 버튼 간의 간격 조절 */
+.header-button + .header-button {
+    margin-left: 5px; /* 버튼 간의 간격 */
+}
+
+/* 헤더의 우측 마진 조절 */
+.header {
+    padding-right: 10px; /* 우측에 약간의 공간을 남깁니다. */
+}
+.header-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.header-button:hover {
+    background-color: #0056b3;
+}
+
+/* 기본 테이블 스타일링 */
+table {
+    width: 100%;
+    border-collapse: collapse; /* 테이블 간격 없애기 */
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+/* 헤더 스타일 */
+thead th {
+    background-color: #f2f2f2;
+    text-align: center;
+}
+
+/* 홀수/짝수 행 스타일 */
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+/* 행에 마우스가 있을 때 스타일 */
+tbody tr:hover {
+    background-color: #e6e6e6;
+}
+

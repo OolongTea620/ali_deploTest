@@ -72,15 +72,15 @@ public class SellerService {
         return storeList.stream().map(StoreResponseDto::new).toList();
     }
 
-    @Transactional
-    public MessageDataResponseDto updateStore(StoreRequestDto requestDto) {
+        @Transactional
+        public MessageDataResponseDto updateStore(StoreRequestDto requestDto, Seller seller) {
 
-        Seller store = sellerRepository.findById(requestDto.getSellerId()).orElseThrow(
-            () -> new NullPointerException("해당 셀러 유저가 없습니다.")
-        );
-        store.update(requestDto);
-        return new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store));
-    }
+            Seller store = sellerRepository.findById(seller.getId()).orElseThrow(
+                () -> new NullPointerException("해당 셀러 유저가 없습니다.")
+            );
+            store.update(requestDto);
+            return new MessageDataResponseDto("스토어 수정 성공", new StoreResponseDto(store));
+        }
 
     @Transactional
     public MessageResponseDto deleteStore(Seller seller) {

@@ -1,32 +1,60 @@
+let isLoggingOut = false;  // 로그아웃 중인지 확인하는 전역 플래그
+
+function logout() {
+    isLoggingOut = true;  // 로그아웃 중임을 표시
+    localStorage.removeItem("Access_Token");
+    localStorage.removeItem("Refresh_Token");
+    location.reload();
+}
+
 window.onload = function() {
-    // 1. 로컬 스토리지에서 JWT 토큰을 가져옵니다.
+    if (isLoggingOut) {
+        return;  // 로그아웃 중일 경우, 나머지 로직을 건너뛴다.
+    }
+
     const token = localStorage.getItem('Access_Token');
-    console.log(token);
+    const currentPath = window.location.pathname;
 
     if (!token) {
-        // 토큰이 없을 경우
+        if (currentPath === '/store' || currentPath === '/seller') {
+            alert("권한이 없습니다.");
+            window.location.href = '/';
+            return;
+        }
+
         const loggedOutButtons = document.getElementById('loggedOutButtons');
         loggedOutButtons.style.display = 'block';
+        document.getElementById('productManagement').style.display = 'none';
+        document.getElementById('storeManagement').style.display = 'none';
     } else {
-        // 2. JWT 토큰을 디코드하여 userType과 username을 확인합니다.
         const decodedToken = atob(token.split('.')[1]);
         const payload = JSON.parse(decodedToken);
 
-        // 3. userType이 "SELLER"인 경우에만 특정 메뉴를 보여줍니다.
-        if (payload.userType !== 'SELLER') {
-            document.getElementById('productManagement').style.display = 'none'; // 상품 관리 메뉴 숨기기
-            document.getElementById('storeManagement').style.display = 'none';   // 매장 관리 메뉴 숨기기
+        if (payload.userType !== 'SELLER' && (currentPath === '/store' || currentPath === '/seller')) {
+            alert("권한이 없습니다.");
+            window.location.href = '/';
+            return;
         }
 
-        // 4. 토큰이 있을 경우 username을 출력합니다.
-        const username = payload.username;
-        const usernameElement = document.createElement('div');
-        usernameElement.textContent = username;
-        const headerDiv = document.querySelector('.header .center');
-        headerDiv.appendChild(usernameElement);
+        if (payload.userType === 'SELLER') {
+            document.getElementById('productManagement').style.display = 'block';
+            document.getElementById('storeManagement').style.display = 'block';
+            document.getElementById('orderManagementLink').setAttribute('href', '/seller3');
+        } else {
+            document.getElementById('productManagement').style.display = 'none';
+            document.getElementById('storeManagement').style.display = 'none';
+            document.getElementById('orderManagementLink').setAttribute('href', '/orders');
+        }
 
-        // 5. 로그인/회원가입 버튼을 숨깁니다.
+        const username = payload.sub;
+        const userType = payload.userType;
+
+        const greetingMessage = `[${userType}] ${username}  `;
+        const usernameSpan = document.getElementById('usernameSpan');
+        usernameSpan.textContent = greetingMessage;
+
         const loggedOutButtons = document.getElementById('loggedOutButtons');
         loggedOutButtons.style.display = 'none';
+        document.getElementById('loggedInInfo').style.display = 'block';
     }
 }

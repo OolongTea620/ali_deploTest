@@ -42,8 +42,9 @@ public class SellerController {
 
     @Operation(summary = "store 수정")
     @PutMapping("/api/seller/store")
-    public ResponseEntity<MessageDataResponseDto> updateStore(@RequestBody StoreRequestDto requestDto){
-        return ResponseEntity.ok(sellerService.updateStore(requestDto));
+    public ResponseEntity<MessageDataResponseDto> updateStore(@RequestBody StoreRequestDto requestDto,
+                                                              @AuthenticationPrincipal SellerDetailsImpl sellerDetails){
+        return ResponseEntity.ok(sellerService.updateStore(requestDto, sellerDetails.getSeller()));
 
     }
 
@@ -52,6 +53,12 @@ public class SellerController {
     public ResponseEntity<MessageResponseDto> deleteStore(@AuthenticationPrincipal SellerDetailsImpl sellerDetails){
 
         return ResponseEntity.ok(sellerService.deleteStore(sellerDetails.getSeller()));
+    }
+
+    // (뷰) 회원가입 페이지 이동
+    @GetMapping("/auth/seller/signup-page")
+    public String signupPage() {
+        return "sellerSignup";
     }
 
 }
