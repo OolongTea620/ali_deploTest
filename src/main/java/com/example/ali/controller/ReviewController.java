@@ -4,6 +4,7 @@ import com.example.ali.dto.ReviewRequestDto;
 import com.example.ali.service.ReviewService;
 import com.example.ali.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
     private final ReviewService reviewService;
     @GetMapping("/api/product/{productId}/reviews")
@@ -29,20 +31,19 @@ public class ReviewController {
         return reviewService.createReview(requestDto, userDetails.getUser());
     }
 
-    @PutMapping("/api/review/{reviewId}")
+    @PutMapping("/api/review")
     public ResponseEntity<?> updateReview(
-            @PathVariable Long reviewId,
             @RequestBody ReviewRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return reviewService.updateReview(requestDto, reviewId, userDetails.getUser());
+        return reviewService.updateReview(requestDto, userDetails.getUser());
     }
 
-    @DeleteMapping("/api/review/{reviewId}")
+    @DeleteMapping("/api/review/{orderId}")
     public ResponseEntity<?> deleteReview(
-            @PathVariable Long reviewId,
+            @PathVariable Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return reviewService.deleteReview(reviewId, userDetails.getUser());
+        return reviewService.deleteReview(orderId, userDetails.getUser());
     }
 }

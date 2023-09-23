@@ -33,7 +33,7 @@ public class Review {
     @Column
     private LocalDateTime deletedAt;
 
-    @OneToOne(mappedBy = "review")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "review")
     private Orders orders;
 
 //    @ManyToOne(fetch = FetchType.LAZY) // fetch 조인을 위한 더하기

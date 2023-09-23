@@ -65,6 +65,8 @@ public class OrdersService {
     // 유저 주문 조회
     @Transactional(readOnly = true)
     public MessageDataResponseDto getUserOrders(User user) {
+        // 해당 주문상품의 deleted_at null 인값만 가져오기
+
         return new MessageDataResponseDto("주문 조회 성공", ordersRepository.findAllByUser(user).stream().map(OrdersResponseDto::new).toList());
     }
 

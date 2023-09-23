@@ -366,7 +366,7 @@
         // 리뷰 수정 API 호출
         var reviewId = editReviewButton.getAttribute("data-review-id"); // 리뷰 ID 가져오기
         var xhr = new XMLHttpRequest();
-        xhr.open("PUT", "/api/review/" + reviewId);
+        xhr.open("PUT", "/api/review");
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.setRequestHeader("Access_Token", Access_Token);
         xhr.setRequestHeader("Refresh_Token", Refresh_Token);
@@ -388,13 +388,56 @@
         xhr.send(JSON.stringify(updatedReviewData));
     })
 
+
+
+//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+    // 리뷰 삭제 버튼 클릭 시
+    var deleteReviewButton = document.getElementById("deleteReviewButton");
+    deleteReviewButton.addEventListener("click", function() {
+        // 모달에서 주문의 order.id 가져오기
+        var orderId = document.getElementById("reviewModal").getAttribute("data-order-id");
+        // 모달에서 리뷰의 reviewId 가져오기
+        // var reviewId = document.getElementById("reviewModal").getAttribute("data-review-id");
+
+        // orderId와 reviewId를 사용하여 리뷰 삭제 요청 보내기
+        deleteReview(orderId);
+    });
+
+    // 리뷰 삭제 요청 보내는 함수
+    function deleteReview(orderId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("DELETE", "/api/review/" + orderId);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.setRequestHeader("Access_Token", Access_Token);
+        xhr.setRequestHeader("Refresh_Token", Refresh_Token);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200 || xhr.status === 204) {
+                    alert("리뷰가 성공적으로 삭제되었습니다.");
+                    var reviewModal = document.getElementById("reviewModal");
+                    reviewModal.style.display = "none";
+                    // 리뷰가 삭제되면 페이지를 새로고침하거나, 다른 업데이트 동작을 수행할 수 있습니다.
+                } else {
+                    var response = JSON.parse(xhr.responseText);
+                    alert(response.errorMessage); // 실패 메시지 표시
+                    console.error("Failed to delete review:", xhr.responseText);
+                }
+            }
+        };
+
+        xhr.send(JSON.stringify({ orderId: orderId }));
+    }
+
     function deleteProduct(productId) {
         var xhr = new XMLHttpRequest();
         xhr.open("DELETE", "/api/seller/product/" + productId);
         xhr.setRequestHeader("Access_Token", Access_Token);
         xhr.setRequestHeader("Refresh_Token", Refresh_Token);
         xhr.onload = function () {
-            if (xhr.status === 200) {
+            if (xhr.status === 200 || xhr.status === 204) {
                 // Product deleted successfully, you can handle further actions here
                 console.log("Product deleted successfully:", xhr.responseText);
                 // Reload the product list or update the displayed product details as needed
