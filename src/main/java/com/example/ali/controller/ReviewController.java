@@ -29,13 +29,13 @@ public class ReviewController {
         return reviewService.createReview(requestDto, userDetails.getUser());
     }
 
-    @PutMapping("/api/review/{reviewId}")
+    @PutMapping("/api/review/{orderId}")
     public ResponseEntity<?> updateReview(
-            @PathVariable Long reviewId,
+            @PathVariable Long orderId,
             @RequestBody ReviewRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return reviewService.updateReview(requestDto, reviewId, userDetails.getUser());
+        return reviewService.updateReview(requestDto, orderId, userDetails.getUser());
     }
 
     @DeleteMapping("/api/review/{reviewId}")
