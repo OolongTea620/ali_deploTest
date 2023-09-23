@@ -63,7 +63,7 @@ class UserRepositoryTest {
         // when
         List<User> users =  userRepository.findAll();
         // then
-        assertThat(users).isNotNull().hasSize(2); // 위의 생성 test 2번 실행후
+        assertThat(users).isNotNull().hasSize(4); // 위의 생성 test 2번 실행후
     }
 
 
