@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -32,14 +33,24 @@ public class Review {
     @Column
     private LocalDateTime deletedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY) // fetch 조인을 위한 더하기
-    @JoinColumn(name = "order_id")
+    @OneToOne(mappedBy = "review")
     private Orders orders;
 
-    public Review(ReviewRequestDto requestDto, Orders order) {
+//    @ManyToOne(fetch = FetchType.LAZY) // fetch 조인을 위한 더하기
+//    @JoinColumn(name = "order_id")
+//    private Orders orders;
+
+//    public Review(ReviewRequestDto requestDto, Orders order) {
+//        this.comment = requestDto.getComment();
+//        this.rating = requestDto.getRating();
+//        this.orders = order;
+//    }
+
+    public Review(ReviewRequestDto requestDto, Orders orders) {
         this.comment = requestDto.getComment();
         this.rating = requestDto.getRating();
-        this.orders = order;
+        this.orders = orders;
+        orders.setReview(this);
     }
 
     public Review(String comment, Integer rating) {

@@ -8,14 +8,13 @@ import lombok.Getter;
 
 @Getter
 public class ReviewRequestDto {
-    @NotNull
     private Long orderId;
 
     @NotBlank
     private String comment;
 
     @NotBlank
-    @Min(value = 1L) @Max(value= 5L)
+//    @Min(value = 1L) @Max(value= 5L)
     private Integer rating;
 
     public ReviewRequestDto(Long orderId, String comment, Integer rating) {

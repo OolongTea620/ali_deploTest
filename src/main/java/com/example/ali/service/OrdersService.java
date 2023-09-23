@@ -23,7 +23,16 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
+
+
+    public MessageDataResponseDto getReview(Long orderId) {
+        Orders orders = ordersRepository.findById(orderId).orElseThrow(() ->
+            new IllegalArgumentException("해당 주문이 없습니다."));
+
+        return new MessageDataResponseDto("리뷰 조회 성공", orders.getReview());
+    }
 
     // 상품 주문
     @Transactional
@@ -108,4 +117,5 @@ public class OrdersService {
                 () -> new IllegalArgumentException("해당 셀러를 찾을 수 없습니다.")
         );
     }
+
 }
