@@ -1,36 +1,38 @@
-function logout() {
-    // 로컬 스토리지에서 토큰 삭제
-    localStorage.removeItem("Access_Token");
-    localStorage.removeItem("Refresh_Token");
-    // 페이지를 리로드하여 로그아웃 상태를 반영
-    location.reload();
-}
-
 window.onload = function() {
-    // 1. 로컬 스토리지에서 JWT 토큰을 가져옵니다.
-
-
     const token = localStorage.getItem('Access_Token');
-    console.log(token);
+    const currentPath = window.location.pathname;
+
     if (!token) {
-        // 토큰이 없을 경우
+        // 현재 엔드포인트가 /store 또는 /seller일 때 토큰이 없으면 리다이렉트
+        if (currentPath === '/store' || currentPath === '/seller') {
+            alert("권한이 없습니다.");
+            window.location.href = '/';
+            return;
+        }
+
         const loggedOutButtons = document.getElementById('loggedOutButtons');
         loggedOutButtons.style.display = 'block';
-        document.getElementById('loggedInInfo').style.display = 'none'; // 로그인 상태 버튼 숨기기
+
+        document.getElementById('productManagement').style.display = 'none';
+        document.getElementById('storeManagement').style.display = 'none';
     } else {
-        // 2. JWT 토큰을 디코드하여 userType과 username을 확인합니다.
         const decodedToken = atob(token.split('.')[1]);
         const payload = JSON.parse(decodedToken);
 
-        // 3. userType이 "SELLER"인 경우에만 특정 메뉴를 보여줍니다.
-        if (payload.userType !== 'SELLER') {
-            document.getElementById('productManagement').style.display = 'none'; // 상품 관리 메뉴 숨기기
-            document.getElementById('storeManagement').style.display = 'none';   // 매장 관리 메뉴 숨기기
+        // userType이 SELLER가 아니면서 /store 또는 /seller에 접속한 경우 리다이렉트
+        if (payload.userType !== 'SELLER' && (currentPath === '/store' || currentPath === '/seller')) {
+            alert("권한이 없습니다.");
+            window.location.href = '/';
+            return;
         }
 
-        // 4. 토큰이 있을 경우 username을 출력하고 로그인 상태 버튼을 표시합니다.
+        if (payload.userType !== 'SELLER') {
+            document.getElementById('productManagement').style.display = 'none';
+            document.getElementById('storeManagement').style.display = 'none';
+        }
+
         const username = payload.sub;
-        const userType = payload.userType; // userType 값을 가져옵니다.
+        const userType = payload.userType;
 
         const greetingMessage = `[${userType}] ${username}  `;
         const usernameSpan = document.getElementById('usernameSpan');
@@ -40,6 +42,4 @@ window.onload = function() {
         loggedOutButtons.style.display = 'none';
         document.getElementById('loggedInInfo').style.display = 'block';
     }
-
-
 }
