@@ -32,4 +32,4 @@ jobs:
         arguments: build
 
     - name: gradle build  
-      run : ./gradlew clean build
+      run : ./gradlew clean build -x test
