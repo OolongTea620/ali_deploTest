@@ -41,3 +41,5 @@ spring:
 jwt:
   secret:
     key: 7JWI64WV7ZWY7IS47JqUIO2Vre2VtDE26riwIDE17KGw7J6F64uI64ukLg
+server:
+  port: 8081
