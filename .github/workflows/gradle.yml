@@ -31,5 +31,6 @@ jobs:
       with:
         arguments: build
 
-    - name: gradle build  
-      run : ./gradlew clean build -x test
+#    - name: gradle build  
+#    #  gradle 빌드 시, 테스트 제외하고 실행
+#      run : ./gradlew clean build -x test
